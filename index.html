@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEON STRIKER - ULTIMATE EDITION</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            background-color: #030308;
+            color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        #game-container {
+            position: relative;
+            width: 480px;
+            height: 640px;
+            box-shadow: 0 0 50px rgba(0, 243, 255, 0.25);
+            border: 2px solid #1f1f3a;
+            border-radius: 12px;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #0f0c29, #1b1736, #0b0914);
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+        /* UIレイヤー */
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 16px;
+            z-index: 10;
+        }
+        .hud-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            background: rgba(10, 10, 20, 0.75);
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+        }
+        .hud-top span {
+            color: #00f3ff;
+        }
+        .hud-coin {
+            color: #ffd700 !important;
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
+        }
+
+        /* 画面オーバーレイ */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 5, 12, 0.95);
+            backdrop-filter: blur(6px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            padding: 20px;
+            transition: opacity 0.3s ease;
+            overflow-y: auto;
+        }
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        h1 {
+            font-size: 32px;
+            margin-bottom: 2px;
+            background: linear-gradient(45deg, #00f3ff, #ff007f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
+            letter-spacing: 2px;
+            text-align: center;
+        }
+        .subtitle {
+            color: #8080a0;
+            margin-bottom: 14px;
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .menu-box {
+            background: rgba(20, 20, 40, 0.6);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 12px;
+            padding: 12px 16px;
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 10px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+        }
+        .menu-title {
+            font-size: 12px;
+            color: #00f3ff;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+            padding-bottom: 2px;
+        }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+        .btn {
+            flex: 1;
+            background: linear-gradient(45deg, #1f1f3a, #2a2a5a);
+            border: 1px solid #00f3ff;
+            color: #fff;
+            padding: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .btn:hover {
+            background: linear-gradient(45deg, #00f3ff, #0077ff);
+            color: #05050a;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+        }
+        .btn.active {
+            background: linear-gradient(45deg, #00f3ff, #0077ff);
+            color: #05050a;
+            box-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
+        }
+        .btn-action {
+            width: 100%;
+            background: linear-gradient(45deg, #00f3ff, #ff007f);
+            border: none;
+            color: white;
+            padding: 12px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
+            transition: all 0.2s ease;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+        .btn-action:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.7);
+        }
+        .btn-sub {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #b0b0c0;
+            margin-top: 4px;
+        }
+        .btn-sub:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        .btn-danger {
+            border-color: #ff0055;
+            color: #ff0055;
+        }
+        .btn-danger:hover {
+            background: linear-gradient(45deg, #ff0055, #ff007f);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.5);
+        }
+
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 10, 20, 0.8);
+            padding: 6px 12px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .shop-info div:first-child {
+            font-size: 12px;
+            font-weight: bold;
+            color: #fff;
+        }
+        .shop-info div:last-child {
+            font-size: 11px;
+            color: #ffd700;
+        }
+        .btn-buy {
+            background: #2a2a5a;
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 5px 10px;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-buy:hover:not(:disabled) {
+            background: #ffd700;
+            color: #05050a;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+        }
+        .btn-buy:disabled {
+            border-color: #444;
+            color: #666;
+            cursor: not-allowed;
+            background: #111;
+        }
+
+        .backup-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 4px;
+        }
+
+        /* チュートリアルスライド */
+        .tutorial-slide {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            background: rgba(20, 20, 40, 0.7);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 12px;
+            box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
+            min-height: 180px;
+            justify-content: center;
+        }
+        .tutorial-slide.active {
+            display: flex;
+        }
+        .slide-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
+        }
+        .slide-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #00f3ff;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .slide-desc {
+            font-size: 12px;
+            color: #b0b0c0;
+            line-height: 1.5;
+        }
+        .slide-dots {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: 0.3s;
+        }
+        .dot.active {
+            background: #00f3ff;
+            box-shadow: 0 0 8px #00f3ff;
+            width: 20px;
+            border-radius: 4px;
+        }
+        .slide-nav {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* リセットアニメーション用スタイル */
+        @keyframes wipeOut {
+            0% { transform: scale(1); opacity: 1; filter: hue-rotate(0deg); }
+            50% { transform: scale(1.05); opacity: 0.8; filter: hue-rotate(90deg) brightness(2); }
+            100% { transform: scale(0); opacity: 0; filter: hue-rotate(180deg) brightness(5); }
+        }
+        .reset-anim {
+            animation: wipeOut 0.6s forwards ease-in-out;
+        }
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas" width="480" height="640"></canvas>
+    
+    <!-- HUD最優先レイヤー -->
+    <div id="ui-layer">
+        <div class="hud-top">
+            <div>SCORE: <span id="score-val">0</span></div>
+            <div>COIN: <span id="coin-val" class="hud-coin">0</span></div>
+            <div>HP: <span id="hp-val">100</span></div>
+        </div>
+    </div>
+
+    <!-- スタート画面（メインメニュー） -->
+    <div id="main-overlay" class="overlay">
+        <h1>NEON STRIKER</h1>
+        <div class="subtitle">Ultimate Edition</div>
+
+        <div class="menu-box">
+            <div class="menu-title">Game Mode</div>
+            <div class="btn-group">
+                <button class="btn active" id="mode-new" onclick="setMode('new')">最初から</button>
+                <button class="btn" id="mode-continue" onclick="setMode('continue')">続きから</button>
+            </div>
+        </div>
+
+        <div class="menu-box">
+            <div class="menu-title">Difficulty (難易度)</div>
+            <div class="btn-group">
+                <button class="btn active" id="diff-1" onclick="setDifficulty(1)">★✰✰</button>
+                <button class="btn" id="diff-2" onclick="setDifficulty(2)">★★✰</button>
+                <button class="btn" id="diff-3" onclick="setDifficulty(3)">★★★</button>
+            </div>
+        </div>
+
+        <div class="menu-box">
+            <div class="menu-title">Item Shop</div>
+            <div class="shop-item">
+                <div class="shop-info">
+                    <div>HP増強 (Max HP +50)</div>
+                    <div id="item-hp-cost">COST: 50C</div>
+                </div>
+                <button class="btn-buy" id="buy-hp" onclick="buyItem('hp')">購入</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-info">
+                    <div>連射速度向上 (Rapid Fire)</div>
+                    <div id="item-rapid-cost">COST: 100C</div>
+                </div>
+                <button class="btn-buy" id="buy-rapid" onclick="buyItem('rapid')">購入</button>
+            </div>
+        </div>
+
+        <div class="menu-box">
+            <div class="menu-title">Save Backup & Reset</div>
+            <div class="backup-group">
+                <button class="btn btn-sub" onclick="exportSave()">コード出力</button>
+                <button class="btn btn-sub" onclick="importSave()">コード読込</button>
+            </div>
+            <button class="btn btn-sub btn-danger" style="width: 100%; margin-top: 6px;" onclick="confirmResetStep1()">データ初期化</button>
+        </div>
+
+        <button class="btn-action" onclick="startGame()">GAME START</button>
+        <button class="btn btn-action btn-sub" onclick="openTutorial()">遊び方を見る</button>
+    </div>
+
+    <!-- チュートリアルスライド画面 -->
+    <div id="tutorial-overlay" class="overlay hidden">
+        <h1>HOW TO PLAY</h1>
+        <div class="subtitle">ゲームの遊び方</div>
+
+        <div class="tutorial-slide active" id="slide-0">
+            <div class="slide-icon">🚀</div>
+            <div class="slide-title">1. 操作方法</div>
+            <div class="slide-desc">
+                マウス移動で自機が追従します。<br>
+                左クリック（またはスペースキー長押し）で<br>
+                自動ビームを連射して敵を撃破！
+            </div>
+        </div>
+
+        <div class="tutorial-slide" id="slide-1">
+            <div class="slide-icon">⭐</div>
+            <div class="slide-title">2. 難易度選択</div>
+            <div class="slide-desc">
+                ★✰✰ (NORMAL)、★★✰ (HARD)、<br>
+                ★★★ (INSANE) の3段階から選択可能。<br>
+                腕前に合わせた難易度で挑もう！
+            </div>
+        </div>
+
+        <div class="tutorial-slide" id="slide-2">
+            <div class="slide-icon">💾</div>
+            <div class="slide-title">3. セーブとバックアップ</div>
+            <div class="slide-desc">
+                コインや強化は自動保存されます。<br>
+                メニューの「コード出力/読込」で<br>
+                データのバックアップもバッチリ！
+            </div>
+        </div>
+
+        <div class="slide-dots">
+            <div class="dot active" id="dot-0"></div>
+            <div class="dot" id="dot-1"></div>
+            <div class="dot" id="dot-2"></div>
+        </div>
+
+        <div class="slide-nav">
+            <button class="btn" id="btn-prev" onclick="changeSlide(-1)" style="display:none;">戻る</button>
+            <button class="btn btn-action" id="btn-next" onclick="changeSlide(1)" style="margin-top:0;">次へ</button>
+        </div>
+        <button class="btn btn-action btn-sub" onclick="closeTutorial()">スキップしてメニューへ</button>
+    </div>
+</div>
+
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const scoreEl = document.getElementById('score-val');
+const coinEl = document.getElementById('coin-val');
+const hpEl = document.getElementById('hp-val');
+const overlay = document.getElementById('main-overlay');
+const tutorialOverlay = document.getElementById('tutorial-overlay');
+
+let currentSlide = 0;
+const totalSlides = 3;
+
+function openTutorial() {
+    currentSlide = 0;
+    updateSlideUI();
+    overlay.classList.add('hidden');
+    tutorialOverlay.classList.remove('hidden');
+}
+
+function closeTutorial() {
+    tutorialOverlay.classList.add('hidden');
+    overlay.classList.remove('hidden');
+}
+
+function changeSlide(direction) {
+    currentSlide += direction;
+    if (currentSlide >= totalSlides) {
+        closeTutorial();
+        return;
+    }
+    if (currentSlide < 0) currentSlide = 0;
+    updateSlideUI();
+}
+
+function updateSlideUI() {
+    for (let i = 0; i < totalSlides; i++) {
+        document.getElementById(`slide-${i}`).classList.toggle('active', i === currentSlide);
+        document.getElementById(`dot-${i}`).classList.toggle('active', i === currentSlide);
+    }
+    document.getElementById('btn-prev').style.display = currentSlide === 0 ? 'none' : 'block';
+    document.getElementById('btn-next').innerText = currentSlide === totalSlides - 1 ? '完了' : '次へ';
+}
+
+// ゲームデータ
+let gameData = {
+    coins: 0,
+    maxHpLevel: 0,
+    rapidLevel: 0
+};
+
+let startMode = 'new';
+let difficulty = 1; // 1: ★✰✰, 2: ★★✰, 3: ★★★
+
+function loadGameData() {
+    const saved = localStorage.getItem('neon_striker_save');
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            gameData.coins = data.coins || 0;
+            gameData.maxHpLevel = data.maxHpLevel || 0;
+            gameData.rapidLevel = data.rapidLevel || 0;
+        } catch(e) {}
+    }
+    updateShopUI();
+    coinEl.innerText = gameData.coins;
+}
+
+function saveGameData() {
+    localStorage.setItem('neon_striker_save', JSON.stringify(gameData));
+}
+
+// 3段階確認付きセーブデータリセット機能
+function confirmResetStep1() {
+    if (confirm("【第1段階】\nセーブデータを消しますか？")) {
+        confirmResetStep2();
+    }
+}
+
+function confirmResetStep2() {
+    if (confirm("【第2段階】\n本当にすべてのデータが消去されます。本当に消しますか？")) {
+        confirmResetStep3();
+    }
+}
+
+function confirmResetStep3() {
+    if (confirm("【最終確認】\n後悔しませんね？ OKを押すとデータが完全に消去されます。")) {
+        executeResetAnimation();
+    }
+}
+
+function executeResetAnimation() {
+    const container = document.getElementById('game-container');
+    container.classList.add('reset-anim');
+    
+    setTimeout(() => {
+        localStorage.removeItem('neon_striker_save');
+        gameData = { coins: 0, maxHpLevel: 0, rapidLevel: 0 };
+        loadGameData();
+        updateShopUI();
+        coinEl.innerText = gameData.coins;
+        
+        container.classList.remove('reset-anim');
+        alert("セーブデータが完全に初期化されました。");
+    }, 600);
+}
+
+// バックアップ機能（エクスポート・インポート）
+function exportSave() {
+    const dataStr = btoa(JSON.stringify(gameData));
+    prompt("セーブデータのバックアップコードです。コピーして保存してください：", dataStr);
+}
+
+function importSave() {
+    const code = prompt("バックアップコードを入力してください：");
+    if (!code) return;
+    try {
+        const decoded = JSON.parse(atob(code));
+        if (typeof decoded.coins === 'number') {
+            gameData = decoded;
+            saveGameData();
+            loadGameData();
+            alert("セーブデータの復元に成功しました！");
+        } else {
+            alert("無効なコードです。");
+        }
+    } catch(e) {
+        alert("コードの読み込みに失敗しました。");
+    }
+}
+
+function setMode(mode) {
+    startMode = mode;
+    document.getElementById('mode-new').classList.toggle('active', mode === 'new');
+    document.getElementById('mode-continue').classList.toggle('active', mode === 'continue');
+    
+    if (mode === 'new') {
+        gameData.coins = 0;
+        gameData.maxHpLevel = 0;
+        gameData.rapidLevel = 0;
+        saveGameData();
+    } else {
+        loadGameData();
+    }
+    coinEl.innerText = gameData.coins;
+    updateShopUI();
+}
+
+function setDifficulty(diff) {
+    difficulty = diff;
+    for (let i = 1; i <= 3; i++) {
+        document.getElementById(`diff-${i}`).classList.toggle('active', i === diff);
+    }
+}
+
+function getHpCost() { return 50 + gameData.maxHpLevel * 30; }
+function getRapidCost() { return 100 + gameData.rapidLevel * 60; }
+
+function updateShopUI() {
+    document.getElementById('item-hp-cost').innerText = `COST: ${getHpCost()}C (Lv.${gameData.maxHpLevel})`;
+    document.getElementById('item-rapid-cost').innerText = `COST: ${getRapidCost()}C (Lv.${gameData.rapidLevel})`;
+    
+    document.getElementById('buy-hp').disabled = gameData.coins < getHpCost();
+    document.getElementById('buy-rapid').disabled = gameData.coins < getRapidCost();
+}
+
+function buyItem(type) {
+    if (type === 'hp') {
+        const cost = getHpCost();
+        if (gameData.coins >= cost) {
+            gameData.coins -= cost;
+            gameData.maxHpLevel++;
+        }
+    } else if (type === 'rapid') {
+        const cost = getRapidCost();
+        if (gameData.coins >= cost) {
+            gameData.coins -= cost;
+            gameData.rapidLevel++;
+        }
+    }
+    saveGameData();
+    coinEl.innerText = gameData.coins;
+    updateShopUI();
+}
+
+loadGameData();
+
+let gameRunning = false;
+let score = 0;
+let maxHp = 100;
+let hp = 100;
+let coinsEarnedThisRun = 0;
+let mouseX = canvas.width / 2;
+let mouseY = canvas.height - 100;
+let isMouseDown = false;
+let screenShakeTimer = 0;
+let screenShakeIntensity = 0;
+
+let player = {};
+let bullets = [];
+let enemies = [];
+let particles = [];
+let stars = [];
+
+for (let i = 0; i < 100; i++) {
+    stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speed: Math.random() * 2 + 0.5
+    });
+}
+
+window.addEventListener('mousemove', (e) => {
+    const rect = canvas.getBoundingClientRect();
+    mouseX = e.clientX - rect.left;
+    mouseY = e.clientY - rect.top;
+});
+window.addEventListener('mousedown', () => isMouseDown = true);
+window.addEventListener('mouseup', () => isMouseDown = false);
+window.addEventListener('keydown', (e) => { if (e.code === 'Space') isMouseDown = true; });
+window.addEventListener('keyup', (e) => { if (e.code === 'Space') isMouseDown = false; });
+
+function startGame() {
+    if (startMode === 'new') {
+        gameData.coins = 0;
+    }
+    
+    maxHp = 100 + gameData.maxHpLevel * 50;
+    hp = maxHp;
+
+    score = 0;
+    coinsEarnedThisRun = 0;
+    bullets = [];
+    enemies = [];
+    particles = [];
+
+    scoreEl.innerText = score;
+    coinEl.innerText = gameData.coins;
+    hpEl.innerText = hp;
+
+    player = {
+        x: canvas.width / 2,
+        y: canvas.height - 80,
+        radius: 12,
+        shootCooldown: 0
+    };
+
+    overlay.classList.add('hidden');
+    gameRunning = true;
+    requestAnimationFrame(gameLoop);
+}
+
+function gameOver() {
+    gameRunning = false;
+    isMouseDown = false;
+    
+    gameData.coins += coinsEarnedThisRun;
+    saveGameData();
+
+    document.querySelector('#main-overlay h1').innerText = "GAME OVER";
+    document.querySelector('#main-overlay .subtitle').innerText = `スコア: ${score} / 獲得コイン: +${coinsEarnedThisRun}C`;
+    
+    updateShopUI();
+    coinEl.innerText = gameData.coins;
+    overlay.classList.remove('hidden');
+}
+
+function triggerShake(duration, intensity) {
+    screenShakeTimer = duration;
+    screenShakeIntensity = intensity;
+}
+
+function createParticles(x, y, color, count = 10) {
+    for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = Math.random() * 4 + 1;
+        particles.push({
+            x: x,
+            y: y,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            alpha: 1,
+            decay: Math.random() * 0.03 + 0.015,
+            color: color,
+            size: Math.random() * 3 + 1
+        });
+    }
+}
+
+let spawnTimer = 0;
+function spawnEnemies() {
+    spawnTimer++;
+    let threshold = 25;
+    let speedMultiplier = 1.0;
+    if (difficulty === 2) { threshold = 17; speedMultiplier = 1.3; }
+    if (difficulty === 3) { threshold = 10; speedMultiplier = 1.6; }
+
+    if (spawnTimer > threshold) {
+        spawnTimer = 0;
+        const type = Math.random() > (difficulty === 3 ? 0.6 : 0.75) ? 'heavy' : 'normal';
+        let baseSpeed = type === 'heavy' ? 1.5 : 2.5;
+        enemies.push({
+            x: Math.random() * (canvas.width - 40) + 20,
+            y: -30,
+            radius: type === 'heavy' ? 20 : 12,
+            hp: type === 'heavy' ? (difficulty === 3 ? 4 : 3) : 1,
+            speed: baseSpeed * speedMultiplier,
+            type: type,
+            color: type === 'heavy' ? '#ff0055' : '#ffaa00'
+        });
+    }
+}
+
+function update() {
+    player.x += (mouseX - player.x) * 0.2;
+    player.y += (mouseY - player.y) * 0.2;
+    player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
+    player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+
+    const baseCooldown = Math.max(2, 6 - gameData.rapidLevel);
+    player.shootCooldown--;
+    if (isMouseDown && player.shootCooldown <= 0) {
+        bullets.push({
+            x: player.x,
+            y: player.y - player.radius,
+            vx: 0,
+            vy: -12,
+            radius: 4,
+            color: '#00f3ff'
+        });
+        player.shootCooldown = baseCooldown;
+    }
+
+    for (let i = bullets.length - 1; i >= 0; i--) {
+        let b = bullets[i];
+        b.x += b.vx;
+        b.y += b.vy;
+        if (b.y < 0) bullets.splice(i, 1);
+    }
+
+    spawnEnemies();
+    for (let i = enemies.length - 1; i >= 0; i--) {
+        let e = enemies[i];
+        e.y += e.speed;
+
+        if (e.y > canvas.height + 30) {
+            enemies.splice(i, 1);
+            continue;
+        }
+
+        const distToPlayer = Math.hypot(player.x - e.x, player.y - e.y);
+        if (distToPlayer < player.radius + e.radius) {
+            hp -= (difficulty === 3 ? 35 : 25);
+            hpEl.innerText = Math.max(0, hp);
+            createParticles(player.x, player.y, '#ff0055', 20);
+            triggerShake(15, 8);
+            enemies.splice(i, 1);
+
+            if (hp <= 0) {
+                gameOver();
+            }
+            continue;
+        }
+
+        for (let j = bullets.length - 1; j >= 0; j--) {
+            let b = bullets[j];
+            const dist = Math.hypot(b.x - e.x, b.y - e.y);
+            if (dist < b.radius + e.radius) {
+                e.hp--;
+                createParticles(b.x, b.y, '#00f3ff', 4);
+                bullets.splice(j, 1);
+
+                if (e.hp <= 0) {
+                    createParticles(e.x, e.y, e.color, 15);
+                    const addScore = (e.type === 'heavy' ? 300 : 100) * difficulty;
+                    score += addScore;
+                    
+                    const addCoin = (e.type === 'heavy' ? 3 : 1) * difficulty;
+                    coinsEarnedThisRun += addCoin;
+
+                    scoreEl.innerText = score;
+                    coinEl.innerText = gameData.coins + coinsEarnedThisRun;
+                    triggerShake(5, 3);
+                    enemies.splice(i, 1);
+                }
+                break;
+            }
+        }
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= p.decay;
+        if (p.alpha <= 0) particles.splice(i, 1);
+    }
+
+    for (let s of stars) {
+        s.y += s.speed;
+        if (s.y > canvas.height) {
+            s.y = 0;
+            s.x = Math.random() * canvas.width;
+        }
+    }
+
+    if (screenShakeTimer > 0) screenShakeTimer--;
+}
+
+function draw() {
+    ctx.save();
+    if (screenShakeTimer > 0) {
+        const offsetX = (Math.random() - 0.5) * screenShakeIntensity;
+        const offsetY = (Math.random() - 0.5) * screenShakeIntensity;
+        ctx.translate(offsetX, offsetY);
+    }
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = '#ffffff';
+    for (let s of stars) {
+        ctx.globalAlpha = s.size / 2;
+        ctx.fillRect(s.x, s.y, s.size, s.size);
+    }
+    ctx.globalAlpha = 1.0;
+
+    ctx.shadowBlur = 10;
+    for (let b of bullets) {
+        ctx.fillStyle = b.color;
+        ctx.shadowColor = b.color;
+        ctx.beginPath();
+        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    for (let e of enemies) {
+        ctx.fillStyle = e.color;
+        ctx.shadowColor = e.color;
+        ctx.beginPath();
+        ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    ctx.fillStyle = '#00f3ff';
+    ctx.shadowColor = '#00f3ff';
+    ctx.beginPath();
+    ctx.moveTo(player.x, player.y - player.radius * 1.5);
+    ctx.lineTo(player.x - player.radius, player.y + player.radius);
+    ctx.lineTo(player.x + player.radius, player.y + player.radius);
+    ctx.closePath();
+    ctx.fill();
+
+    for (let p of particles) {
+        ctx.globalAlpha = p.alpha;
+        ctx.fillStyle = p.color;
+        ctx.shadowColor = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+    }
+    ctx.globalAlpha = 1.0;
+
+    ctx.restore();
+}
+
+function gameLoop() {
+    if (!gameRunning) return;
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
+</script>
+
+</body>
+</html>
