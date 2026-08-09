@@ -822,7 +822,6 @@ let maxHp = 100;
 let hp = 100;
 let coinsEarnedThisRun = 0;
 
-// 残弾（エネルギー）関連
 let maxAmmo = 100;
 let ammo = 100;
 
@@ -854,7 +853,6 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
-// 画面全体のどこをスライドしても反応
 function updatePointerPosition(clientX, clientY) {
     if (isPaused) return;
     const rect = canvas.getBoundingClientRect();
@@ -925,8 +923,6 @@ function startGame() {
     maxHp = 100 + gameData.maxHpLevel * 50;
     hp = maxHp;
 
-    // 難易度によってタンクの満タン量を変更
-    // 難易度1(簡単): タンク小(60), 難易度2: 中(100), 難易度3(難): 大(160)
     if (difficulty === 1) maxAmmo = 60;
     else if (difficulty === 2) maxAmmo = 100;
     else maxAmmo = 160;
@@ -1073,7 +1069,6 @@ function update() {
     const baseCooldown = Math.max(2, 6 - gameData.rapidLevel);
     player.shootCooldown--;
 
-    // 画面スライド中（タッチ/クリック中）かつエネルギーがある場合に連射
     if (isTouchingOrClicking && player.shootCooldown <= 0 && ammo > 0) {
         bullets.push({
             x: player.x,
@@ -1084,15 +1079,13 @@ function update() {
             color: '#00f3ff'
         });
         player.shootCooldown = baseCooldown;
-        ammo = Math.max(0, ammo - 1); // 弾を1発消費
+        ammo = Math.max(0, ammo - 1);
     }
 
-    // UIの弾数ゲージ更新
     let ammoPercent = Math.max(0, (ammo / maxAmmo) * 100);
     ammoEl.innerText = Math.floor(ammoPercent) + '%';
     ammoBarFill.style.width = ammoPercent + '%';
 
-    // 弾丸の移動
     for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
         b.x += b.vx;
@@ -1100,7 +1093,6 @@ function update() {
         if (b.y < 0) bullets.splice(i, 1);
     }
 
-    // アイテム（エネルギー回復）の処理
     for (let i = items.length - 1; i >= 0; i--) {
         let it = items[i];
         it.y += it.speed;
@@ -1110,14 +1102,12 @@ function update() {
         }
         const distToPlayer = Math.hypot(player.x - it.x, player.y - it.y);
         if (distToPlayer < player.radius + it.radius) {
-            // 取得：エネルギー全回復
             ammo = maxAmmo;
             createParticles(player.x, player.y, '#00f3ff', 15);
             items.splice(i, 1);
         }
     }
 
-    // 敵弾の処理
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
         let eb = enemyBullets[i];
         eb.x += eb.vx;
@@ -1143,7 +1133,6 @@ function update() {
         }
     }
 
-    // ボスの処理
     if (boss === null) {
         spawnEnemies();
     } else {
@@ -1212,7 +1201,6 @@ function update() {
         }
     }
 
-    // 雑魚敵の処理
     for (let i = enemies.length - 1; i >= 0; i--) {
         let e = enemies[i];
         e.y += e.speed;
@@ -1252,8 +1240,8 @@ function update() {
                     scoreEl.innerText = score;
                     triggerShake(5, 3);
 
-                    // 敵撃破時に一定確率でエネルギー回復アイテムをドロップ
-                    if (Math.random() < 0.35) {
+                    // 補充アイテムのドロップ率を適度な確率（18%）に調整
+                    if (Math.random() < 0.18) {
                         items.push({
                             x: e.x,
                             y: e.y,
@@ -1319,7 +1307,6 @@ function draw() {
         ctx.fill();
     }
 
-    // アイテム（エネルギー回復）の描画
     for (let it of items) {
         ctx.fillStyle = '#00ffff';
         ctx.shadowColor = '#00ffff';
