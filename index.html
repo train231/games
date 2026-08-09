@@ -461,10 +461,10 @@
         </div>
     </div>
 
-    <!-- スタート画面（メインメニュー） -->
+    <!-- スタート画面（兼結果画面） -->
     <div id="main-overlay" class="overlay">
-        <h1>NEON STRIKER</h1>
-        <div class="subtitle">Ultimate Edition</div>
+        <h1 id="menu-main-title">NEON STRIKER</h1>
+        <div class="subtitle" id="menu-subtitle">Ultimate Edition</div>
 
         <div class="menu-box">
             <div class="menu-title">Game Mode</div>
@@ -600,6 +600,8 @@ const scoreEl = document.getElementById('score-val');
 const coinEl = document.getElementById('coin-val');
 const hpEl = document.getElementById('hp-val');
 const overlay = document.getElementById('main-overlay');
+const menuMainTitle = document.getElementById('menu-main-title');
+const menuSubtitle = document.getElementById('menu-subtitle');
 const pauseOverlay = document.getElementById('pause-overlay');
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 const bossHud = document.getElementById('boss-hud');
@@ -818,7 +820,6 @@ let particles = [];
 let stars = [];
 
 let defeatedEnemyCount = 0;
-// ボス出現までの道のりを長く調整（40体に増加）
 const BOSS_SPAWN_THRESHOLD = 40;
 
 for (let i = 0; i < 100; i++) {
@@ -981,8 +982,9 @@ function endGame(resultTitle) {
     gameData.coins += coinsEarnedThisRun;
     saveGameData();
 
-    document.querySelector('#main-overlay h1').innerText = resultTitle;
-    document.querySelector('#main-overlay .subtitle').innerText = `最終スコア: ${score} / 獲得報酬: +${coinsEarnedThisRun}C`;
+    // 結果画面用のタイトルとサブタイトルに更新して表示する
+    menuMainTitle.innerText = resultTitle;
+    menuSubtitle.innerText = `最終スコア: ${score} / 獲得報酬: +${coinsEarnedThisRun}C`;
     
     updateShopUI();
     coinEl.innerText = gameData.coins;
