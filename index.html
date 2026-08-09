@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>NEON STRIKER - ULTIMATE EDITION</title>
+    <title>NEON STRIKER - KEYBOARD EDITION</title>
     <style>
         * {
             box-sizing: border-box;
@@ -41,7 +41,6 @@
             display: block;
             width: 100%;
             height: 100%;
-            cursor: crosshair;
         }
         /* UIレイヤー */
         #ui-layer {
@@ -105,7 +104,7 @@
             bottom: 12px;
             left: 12px;
             right: 12px;
-            display: flex;
+            display: none; /* デフォルトPC表示時は非表示、タッチ端末用 */
             gap: 10px;
             pointer-events: auto;
             z-index: 20;
@@ -433,7 +432,7 @@
             max-width: 400px;
         }
 
-        /* リザルト画面専用のシンプルデザイン */
+        /* リザルト画面専用 */
         .result-panel {
             display: flex;
             flex-direction: column;
@@ -510,19 +509,18 @@
             </div>
         </div>
 
-        <!-- 下部コントローラー（発射ボタン ＆ 発射ロックボタン） -->
+        <!-- モバイル用コントローラー -->
         <div id="control-panel">
-            <button class="control-btn" id="btn-fire">FIRE (押して連射)</button>
-            <button class="control-btn" id="btn-lock">LOCK (自動連射切替)</button>
+            <button class="control-btn" id="btn-fire">FIRE</button>
+            <button class="control-btn" id="btn-lock">LOCK</button>
         </div>
     </div>
 
-    <!-- スタート画面（兼結果・ゲームオーバー画面） -->
+    <!-- スタート画面 -->
     <div id="main-overlay" class="overlay">
         <h1 id="menu-main-title">NEON STRIKER</h1>
-        <div class="subtitle" id="menu-subtitle">Ultimate Edition</div>
+        <div class="subtitle" id="menu-subtitle">Keyboard Edition</div>
 
-        <!-- 通常のスタートメニューコンテンツ -->
         <div id="start-menu-content" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
             <div class="menu-box">
                 <div class="menu-title">Game Mode</div>
@@ -533,7 +531,7 @@
             </div>
 
             <div class="menu-box">
-                <div class="menu-title">Difficulty (難易度) - タンク容量変化</div>
+                <div class="menu-title">Difficulty (難易度)</div>
                 <div class="btn-group">
                     <button class="btn active" id="diff-1" onclick="setDifficulty(1)">★✰✰ (小)</button>
                     <button class="btn" id="diff-2" onclick="setDifficulty(2)">★★✰ (中)</button>
@@ -542,7 +540,7 @@
             </div>
 
             <div class="menu-box">
-                <div class="menu-title">Item Shop (次回以降に効果適用)</div>
+                <div class="menu-title">Item Shop</div>
                 <div class="shop-item">
                     <div class="shop-info">
                         <div>HP増強 (Max HP +50)</div>
@@ -572,7 +570,6 @@
             <button class="btn btn-action btn-sub" onclick="openTutorial()">遊び方を見る</button>
         </div>
 
-        <!-- ゲームオーバー・リザルト画面用のシンプル表示 -->
         <div id="result-menu-content" class="result-panel" style="display: none;">
             <div class="result-label">SCORE</div>
             <div class="result-value-score" id="res-score">0</div>
@@ -623,9 +620,9 @@
             <div class="slide-icon">💻</div>
             <div class="slide-title">1. PCでの操作方法</div>
             <div class="slide-desc">
-                ・**移動**：マウスを動かすと、その位置へ自機がスムーズに追従します。<br>
-                ・**攻撃**：画面下の「FIRE」ボタンをクリック／長押しで連射。または「LOCK」ボタンで自動連射に切替！<br>
-                ・**ポーズ**：キーボードの「P」キーで一時停止可能です。
+                ・**移動**：**矢印キー** または **W / A / S / D キー** で自機を上下左右に動かします。<br>
+                ・**攻撃**：**スペースキー** を押している間、弾を連射します。<br>
+                ・**ポーズ**：**P キー** で一時停止できます。
             </div>
         </div>
 
@@ -633,26 +630,26 @@
             <div class="slide-icon">📱</div>
             <div class="slide-title">2. モバイルでの操作方法</div>
             <div class="slide-desc">
-                ・**移動**：画面を指でタッチしてスライドさせると、位置に自機が追従します（パッド不要）。<br>
-                ・**攻撃**：画面下の**「FIRE」**（押している間だけ連射）または**「LOCK」**（自動連射のON/OFF切替）ボタンを使用します。
+                ・**移動**：画面を指でタッチ＆スライドさせて自機を動かします。<br>
+                ・**攻撃**：画面下の **「FIRE」** ボタン（押している間連射）または **「LOCK」** ボタン（自動連射切替）を使用します。
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-2">
             <div class="slide-icon">🎯</div>
-            <div class="slide-title">3. 発射とロック機能のコツ</div>
+            <div class="slide-title">3. ゲームのコツ</div>
             <div class="slide-desc">
-                ・**LOCKボタン**は一度押すと、もう一度押すまで自動連射し続けます。<br>
-                ・弾の無駄撃ちや指の疲れを防ぎ、敵の回避に集中できる便利な機能です！
+                ・PCならキーボードで両手が自由に使えるため、敵弾の回避と攻撃を同時に完璧に行えます！<br>
+                ・連射しすぎるとエネルギー（AMMO）が切れるため、青い球を拾って回復しながら戦いましょう。
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-3">
             <div class="slide-icon">⚡</div>
-            <div class="slide-title">4. エネルギー管理とショップ</div>
+            <div class="slide-title">4. ショップとステージクリア</div>
             <div class="slide-desc">
-                ・連射すると上部のエネルギーが減少します。敵が落とす青い球を拾って全回復！<br>
-                ・敵を倒してコインを稼ぎ、メニューの「ショップ」で自機を強化してステージをクリアしよう！
+                ・敵を倒してコインを稼ぎ、メニューのショップで自機を強化！<br>
+                ・奥に出現する強力なボスを撃破してステージクリアを目指そう！
             </div>
         </div>
 
@@ -693,23 +690,76 @@ const pauseOverlay = document.getElementById('pause-overlay');
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 const bossHud = document.getElementById('boss-hud');
 const bossBarFill = document.getElementById('boss-bar-fill');
+const controlPanel = document.getElementById('control-panel');
 
 const btnFire = document.getElementById('btn-fire');
 const btnLock = document.getElementById('btn-lock');
 
+// タッチ端末判定してモバイル用ボタンを表示
+const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+if (isTouchDevice) {
+    controlPanel.style.display = 'flex';
+}
+
 let isFiring = false;
 let isLockedFiring = false;
 
-// FIREボタンのイベント
-btnFire.addEventListener('mousedown', () => { if (!isPaused) isFiring = true; btnFire.classList.add('active'); });
-btnFire.addEventListener('mouseup', () => { isFiring = false; btnFire.classList.remove('active'); });
-btnFire.addEventListener('mouseleave', () => { isFiring = false; btnFire.classList.remove('active'); });
+// キー入力管理用
+const keys = {
+    ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
+    KeyW: false, KeyS: false, KeyA: false, KeyD: false,
+    Space: false
+};
+
+window.addEventListener('keydown', (e) => {
+    // ゲームプレイ中かつメニューが出ていない場合のみキーを捕捉
+    if (e.code === 'Space') {
+        if (!gameRunning || isPaused) return;
+        keys.Space = true;
+        // ゲーム中のみページのデフォルト挙動（スクロール等）を防止
+        e.preventDefault();
+    }
+    if (e.code === 'KeyP' && gameRunning) {
+        if (isPaused) resumeGame();
+        else openPauseMenu();
+        e.preventDefault();
+    }
+    if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.code)) {
+        if (gameRunning && !isPaused) e.preventDefault();
+    }
+    if (keys.hasOwnProperty(e.code) || e.code === 'ArrowUp' || e.code === 'ArrowDown' || e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
+        keys[e.code] = true;
+    }
+});
+
+window.addEventListener('keyup', (e) => {
+    if (keys.hasOwnProperty(e.code) || e.code === 'ArrowUp' || e.code === 'ArrowDown' || e.code === 'ArrowLeft' || e.code === 'ArrowRight') {
+        keys[e.code] = false;
+    }
+});
+
+// モバイル用タッチ操作
+let touchTargetX = null;
+let touchTargetY = null;
+
+window.addEventListener('touchmove', (e) => {
+    if (isPaused || !gameRunning) return;
+    const touch = e.changedTouches[0];
+    const rect = canvas.getBoundingClientRect();
+    touchTargetX = touch.clientX - rect.left;
+    touchTargetY = touch.clientY - rect.top;
+});
+window.addEventListener('touchstart', (e) => {
+    if (isPaused || !gameRunning) return;
+    const touch = e.changedTouches[0];
+    const rect = canvas.getBoundingClientRect();
+    touchTargetX = touch.clientX - rect.left;
+    touchTargetY = touch.clientY - rect.top;
+});
 
 btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); if (!isPaused) isFiring = true; btnFire.classList.add('active'); });
 btnFire.addEventListener('touchend', (e) => { e.preventDefault(); isFiring = false; btnFire.classList.remove('active'); });
-btnFire.addEventListener('touchcancel', (e) => { e.preventDefault(); isFiring = false; btnFire.classList.remove('active'); });
 
-// LOCKボタンのイベント（押してもう一度押すまで切り替え）
 btnLock.addEventListener('click', (e) => {
     e.preventDefault();
     if (isPaused) return;
@@ -751,17 +801,12 @@ function updateSlideUI() {
     document.getElementById('btn-next').innerText = currentSlide === totalSlides - 1 ? '完了' : '次へ';
 }
 
-let gameData = {
-    coins: 0,
-    maxHpLevel: 0,
-    rapidLevel: 0
-};
-
+let gameData = { coins: 0, maxHpLevel: 0, rapidLevel: 0 };
 let startMode = 'new';
 let difficulty = 1;
 
 function loadGameData() {
-    const saved = localStorage.getItem('neon_striker_save');
+    const saved = localStorage.getItem('neon_striker_keyboard_save');
     if (saved) {
         try {
             const data = JSON.parse(saved);
@@ -775,43 +820,28 @@ function loadGameData() {
 }
 
 function saveGameData() {
-    localStorage.setItem('neon_striker_save', JSON.stringify(gameData));
+    localStorage.setItem('neon_striker_keyboard_save', JSON.stringify(gameData));
 }
 
-function confirmResetStep1() {
-    if (confirm("【第1段階】\nセーブデータを消しますか？")) {
-        confirmResetStep2();
-    }
-}
-function confirmResetStep2() {
-    if (confirm("【第2段階】\n本当にすべてのデータが消去されます。本当に消しますか？")) {
-        confirmResetStep3();
-    }
-}
-function confirmResetStep3() {
-    if (confirm("【最終確認】\n後悔しませんね？ OKを押すとデータが完全に消去されます。")) {
-        executeResetAnimation();
-    }
-}
+function confirmResetStep1() { if (confirm("【第1段階】\nセーブデータを消しますか？")) confirmResetStep2(); }
+function confirmResetStep2() { if (confirm("【第2段階】\n本当にすべてのデータが消去されます。")) confirmResetStep3(); }
+function confirmResetStep3() { if (confirm("【最終確認】\nデータが完全に消去されます。OKを押しますか？")) executeResetAnimation(); }
+
 function executeResetAnimation() {
     const container = document.getElementById('game-container');
     container.classList.add('reset-anim');
-    
     setTimeout(() => {
-        localStorage.removeItem('neon_striker_save');
+        localStorage.removeItem('neon_striker_keyboard_save');
         gameData = { coins: 0, maxHpLevel: 0, rapidLevel: 0 };
         loadGameData();
-        updateShopUI();
-        coinEl.innerText = gameData.coins;
-        
         container.classList.remove('reset-anim');
-        alert("セーブデータが完全に初期化されました。");
+        alert("セーブデータが初期化されました。");
     }, 600);
 }
 
 function exportSave() {
     const dataStr = btoa(JSON.stringify(gameData));
-    prompt("セーブデータのバックアップコードです。コピーして保存してください：", dataStr);
+    prompt("セーブデータのバックアップコードです：", dataStr);
 }
 
 function importSave() {
@@ -823,28 +853,21 @@ function importSave() {
             gameData = decoded;
             saveGameData();
             loadGameData();
-            alert("セーブデータの復元に成功しました！");
-        } else {
-            alert("無効なコードです。");
-        }
-    } catch(e) {
-        alert("コードの読み込みに失敗しました。");
-    }
+            alert("復元に成功しました！");
+        } else { alert("無効なコードです。"); }
+    } catch(e) { alert("読み込みに失敗しました。"); }
 }
 
 function setMode(mode) {
     startMode = mode;
     document.getElementById('mode-new').classList.toggle('active', mode === 'new');
     document.getElementById('mode-continue').classList.toggle('active', mode === 'continue');
-    
     if (mode === 'new') {
         gameData.coins = 0;
         gameData.maxHpLevel = 0;
         gameData.rapidLevel = 0;
         saveGameData();
-    } else {
-        loadGameData();
-    }
+    } else { loadGameData(); }
     coinEl.innerText = gameData.coins;
     updateShopUI();
 }
@@ -879,16 +902,10 @@ loadGameData();
 function buyItem(type) {
     if (type === 'hp') {
         const cost = getHpCost();
-        if (gameData.coins >= cost) {
-            gameData.coins -= cost;
-            gameData.maxHpLevel++;
-        }
+        if (gameData.coins >= cost) { gameData.coins -= cost; gameData.maxHpLevel++; }
     } else if (type === 'rapid') {
         const cost = getRapidCost();
-        if (gameData.coins >= cost) {
-            gameData.coins -= cost;
-            gameData.rapidLevel++;
-        }
+        if (gameData.coins >= cost) { gameData.coins -= cost; gameData.rapidLevel++; }
     }
     saveGameData();
     coinEl.innerText = gameData.coins;
@@ -904,9 +921,6 @@ let coinsEarnedThisRun = 0;
 
 let maxAmmo = 100;
 let ammo = 100;
-
-let mouseX = canvas.width / 2;
-let mouseY = canvas.height - 100;
 
 let screenShakeTimer = 0;
 let screenShakeIntensity = 0;
@@ -932,34 +946,6 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
-function updatePointerPosition(clientX, clientY) {
-    if (isPaused) return;
-    const rect = canvas.getBoundingClientRect();
-    mouseX = clientX - rect.left;
-    mouseY = clientY - rect.top;
-}
-
-window.addEventListener('mousemove', (e) => {
-    updatePointerPosition(e.clientX, e.clientY);
-});
-window.addEventListener('touchmove', (e) => {
-    if (isPaused) return;
-    const touch = e.changedTouches[0];
-    updatePointerPosition(touch.clientX, touch.clientY);
-});
-window.addEventListener('touchstart', (e) => {
-    if (isPaused) return;
-    const touch = e.changedTouches[0];
-    updatePointerPosition(touch.clientX, touch.clientY);
-});
-
-window.addEventListener('keydown', (e) => { 
-    if (e.code === 'KeyP' && gameRunning) {
-        if (isPaused) resumeGame();
-        else openPauseMenu();
-    }
-});
-
 function openPauseMenu() {
     if (!gameRunning) return;
     isPaused = true;
@@ -981,9 +967,7 @@ function giveUpGame() {
 }
 
 function startGame() {
-    if (startMode === 'new') {
-        gameData.coins = 0;
-    }
+    if (startMode === 'new') { gameData.coins = 0; }
     
     maxHp = 100 + gameData.maxHpLevel * 50;
     hp = maxHp;
@@ -993,7 +977,6 @@ function startGame() {
     else maxAmmo = 160;
 
     ammo = maxAmmo;
-
     score = 0;
     coinsEarnedThisRun = 0;
     defeatedEnemyCount = 0;
@@ -1006,6 +989,8 @@ function startGame() {
     isLockedFiring = false;
     btnLock.classList.remove('active');
     bossHud.style.display = 'none';
+    touchTargetX = null;
+    touchTargetY = null;
 
     scoreEl.innerText = score;
     coinEl.innerText = gameData.coins;
@@ -1017,11 +1002,9 @@ function startGame() {
         x: canvas.width / 2,
         y: canvas.height - 80,
         radius: 12,
+        speed: 5.5,
         shootCooldown: 0
     };
-    
-    mouseX = player.x;
-    mouseY = player.y;
 
     overlay.classList.add('hidden');
     gameRunning = true;
@@ -1038,7 +1021,6 @@ function endGame(resultTitle) {
     
     const earnedReward = Math.floor((score / 300) * (0.3 + difficulty * 0.15));
     coinsEarnedThisRun = earnedReward;
-
     gameData.coins += coinsEarnedThisRun;
     saveGameData();
 
@@ -1049,14 +1031,13 @@ function endGame(resultTitle) {
 
     startMenuContent.style.display = 'none';
     resultMenuContent.style.display = 'flex';
-    
     coinEl.innerText = gameData.coins;
     overlay.classList.remove('hidden');
 }
 
 function returnToMenu() {
     menuMainTitle.innerText = "NEON STRIKER";
-    menuSubtitle.innerText = "Ultimate Edition";
+    menuSubtitle.innerText = "Keyboard Edition";
     startMenuContent.style.display = 'flex';
     resultMenuContent.style.display = 'none';
     loadGameData();
@@ -1072,14 +1053,11 @@ function createParticles(x, y, color, count = 10) {
         const angle = Math.random() * Math.PI * 2;
         const speed = Math.random() * 4 + 1;
         particles.push({
-            x: x,
-            y: y,
+            x: x, y: y,
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
-            alpha: 1,
-            decay: Math.random() * 0.03 + 0.015,
-            color: color,
-            size: Math.random() * 3 + 1
+            alpha: 1, decay: Math.random() * 0.03 + 0.015,
+            color: color, size: Math.random() * 3 + 1
         });
     }
 }
@@ -1087,7 +1065,6 @@ function createParticles(x, y, color, count = 10) {
 let spawnTimer = 0;
 function spawnEnemies() {
     if (boss !== null) return;
-
     spawnTimer++;
     let threshold = 25;
     let speedMultiplier = 1.0;
@@ -1130,22 +1107,31 @@ function spawnBoss() {
 function update() {
     if (isPaused) return;
 
-    player.x += (mouseX - player.x) * 0.2;
-    player.y += (mouseY - player.y) * 0.2;
+    // 移動処理（キーボード優先、タッチがあればタッチ追従）
+    if (touchTargetX !== null && touchTargetY !== null) {
+        player.x += (touchTargetX - player.x) * 0.2;
+        player.y += (touchTargetY - player.y) * 0.2;
+    } else {
+        if (keys.ArrowLeft || keys.KeyA) player.x -= player.speed;
+        if (keys.ArrowRight || keys.KeyD) player.x += player.speed;
+        if (keys.ArrowUp || keys.KeyW) player.y -= player.speed;
+        if (keys.ArrowDown || keys.KeyS) player.y += player.speed;
+    }
+
     player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
     player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
 
     const baseCooldown = Math.max(2, 6 - gameData.rapidLevel);
     player.shootCooldown--;
 
-    if ((isFiring || isLockedFiring) && player.shootCooldown <= 0 && ammo > 0) {
+    // 攻撃判定（キーボードのスペース、またはモバイルのFIRE/LOCK）
+    const firingCondition = keys.Space || isFiring || isLockedFiring;
+    if (firingCondition && player.shootCooldown <= 0 && ammo > 0) {
         bullets.push({
             x: player.x,
             y: player.y - player.radius,
-            vx: 0,
-            vy: -12,
-            radius: 4,
-            color: '#00f3ff'
+            vx: 0, vy: -12,
+            radius: 4, color: '#00f3ff'
         });
         player.shootCooldown = baseCooldown;
         ammo = Math.max(0, ammo - 1);
@@ -1157,20 +1143,15 @@ function update() {
 
     for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
-        b.x += b.vx;
-        b.y += b.vy;
+        b.x += b.vx; b.y += b.vy;
         if (b.y < 0) bullets.splice(i, 1);
     }
 
     for (let i = items.length - 1; i >= 0; i--) {
         let it = items[i];
         it.y += it.speed;
-        if (it.y > canvas.height + 20) {
-            items.splice(i, 1);
-            continue;
-        }
-        const distToPlayer = Math.hypot(player.x - it.x, player.y - it.y);
-        if (distToPlayer < player.radius + it.radius) {
+        if (it.y > canvas.height + 20) { items.splice(i, 1); continue; }
+        if (Math.hypot(player.x - it.x, player.y - it.y) < player.radius + it.radius) {
             ammo = maxAmmo;
             createParticles(player.x, player.y, '#00f3ff', 15);
             items.splice(i, 1);
@@ -1179,37 +1160,26 @@ function update() {
 
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
         let eb = enemyBullets[i];
-        eb.x += eb.vx;
-        eb.y += eb.vy;
-
+        eb.x += eb.vx; eb.y += eb.vy;
         if (eb.y > canvas.height + 20 || eb.y < -20 || eb.x < -20 || eb.x > canvas.width + 20) {
             enemyBullets.splice(i, 1);
             continue;
         }
-
-        const distToPlayer = Math.hypot(player.x - eb.x, player.y - eb.y);
-        if (distToPlayer < player.radius + eb.radius) {
+        if (Math.hypot(player.x - eb.x, player.y - eb.y) < player.radius + eb.radius) {
             hp -= eb.damage;
             hpEl.innerText = Math.max(0, hp);
             createParticles(player.x, player.y, '#ff0055', 12);
             triggerShake(10, 5);
             enemyBullets.splice(i, 1);
-
-            if (hp <= 0) {
-                endGame("GAME OVER");
-                return;
-            }
+            if (hp <= 0) { endGame("GAME OVER"); return; }
         }
     }
 
     if (boss === null) {
         spawnEnemies();
     } else {
-        if (boss.y < boss.targetY) {
-            boss.y += boss.speed;
-        } else {
-            boss.x += Math.sin(Date.now() / 400) * (2 + difficulty * 0.5);
-        }
+        if (boss.y < boss.targetY) boss.y += boss.speed;
+        else boss.x += Math.sin(Date.now() / 400) * (2 + difficulty * 0.5);
 
         boss.attackTimer++;
         let attackInterval = Math.max(25, 65 - difficulty * 12);
@@ -1221,37 +1191,27 @@ function update() {
                 let a = angleToPlayer + k * spread;
                 let speed = 4 + difficulty * 0.5;
                 enemyBullets.push({
-                    x: boss.x,
-                    y: boss.y + boss.radius,
-                    vx: Math.cos(a) * speed,
-                    vy: Math.sin(a) * speed,
-                    radius: 5,
-                    damage: 15,
-                    color: '#ff0055'
+                    x: boss.x, y: boss.y + boss.radius,
+                    vx: Math.cos(a) * speed, vy: Math.sin(a) * speed,
+                    radius: 5, damage: 15, color: '#ff0055'
                 });
             }
         }
 
-        const distToPlayer = Math.hypot(player.x - boss.x, player.y - boss.y);
-        if (distToPlayer < player.radius + boss.radius) {
+        if (Math.hypot(player.x - boss.x, player.y - boss.y) < player.radius + boss.radius) {
             hp -= 35;
             hpEl.innerText = Math.max(0, hp);
             createParticles(player.x, player.y, '#ff0055', 20);
             triggerShake(15, 8);
-            if (hp <= 0) {
-                endGame("GAME OVER");
-                return;
-            }
+            if (hp <= 0) { endGame("GAME OVER"); return; }
         }
 
         for (let j = bullets.length - 1; j >= 0; j--) {
             let b = bullets[j];
-            const dist = Math.hypot(b.x - boss.x, b.y - boss.y);
-            if (dist < b.radius + boss.radius) {
+            if (Math.hypot(b.x - boss.x, b.y - boss.y) < b.radius + boss.radius) {
                 boss.hp--;
                 createParticles(b.x, b.y, '#00f3ff', 5);
                 bullets.splice(j, 1);
-
                 let hpPercent = Math.max(0, (boss.hp / boss.maxHp) * 100);
                 bossBarFill.style.width = hpPercent + '%';
 
@@ -1262,7 +1222,6 @@ function update() {
                     triggerShake(25, 12);
                     boss = null;
                     bossHud.style.display = 'none';
-
                     endGame("VICTORY!");
                     return;
                 }
@@ -1273,52 +1232,35 @@ function update() {
     for (let i = enemies.length - 1; i >= 0; i--) {
         let e = enemies[i];
         e.y += e.speed;
+        if (e.y > canvas.height + 30) { enemies.splice(i, 1); continue; }
 
-        if (e.y > canvas.height + 30) {
-            enemies.splice(i, 1);
-            continue;
-        }
-
-        const distToPlayer = Math.hypot(player.x - e.x, player.y - e.y);
-        if (distToPlayer < player.radius + e.radius) {
+        if (Math.hypot(player.x - e.x, player.y - e.y) < player.radius + e.radius) {
             hp -= (difficulty === 3 ? 35 : 25);
             hpEl.innerText = Math.max(0, hp);
             createParticles(player.x, player.y, '#ff0055', 20);
             triggerShake(15, 8);
             enemies.splice(i, 1);
-
-            if (hp <= 0) {
-                endGame("GAME OVER");
-                return;
-            }
+            if (hp <= 0) { endGame("GAME OVER"); return; }
             continue;
         }
 
         for (let j = bullets.length - 1; j >= 0; j--) {
             let b = bullets[j];
-            const dist = Math.hypot(b.x - e.x, b.y - e.y);
-            if (dist < b.radius + e.radius) {
+            if (Math.hypot(b.x - e.x, b.y - e.y) < b.radius + e.radius) {
                 e.hp--;
                 createParticles(b.x, b.y, '#00f3ff', 4);
                 bullets.splice(j, 1);
 
                 if (e.hp <= 0) {
                     createParticles(e.x, e.y, e.color, 15);
-                    const addScore = (e.type === 'heavy' ? 300 : 100) * difficulty;
-                    score += addScore;
+                    score += (e.type === 'heavy' ? 300 : 100) * difficulty;
                     scoreEl.innerText = score;
                     triggerShake(5, 3);
 
                     let dropRate = (ammo / maxAmmo < 0.2) ? 0.50 : 0.12;
                     if (Math.random() < dropRate) {
-                        items.push({
-                            x: e.x,
-                            y: e.y,
-                            radius: 8,
-                            speed: 1.5
-                        });
+                        items.push({ x: e.x, y: e.y, radius: 8, speed: 1.5 });
                     }
-
                     enemies.splice(i, 1);
 
                     defeatedEnemyCount++;
@@ -1333,18 +1275,13 @@ function update() {
 
     for (let i = particles.length - 1; i >= 0; i--) {
         let p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.alpha -= p.decay;
+        p.x += p.vx; p.y += p.vy; p.alpha -= p.decay;
         if (p.alpha <= 0) particles.splice(i, 1);
     }
 
     for (let s of stars) {
         s.y += s.speed;
-        if (s.y > canvas.height) {
-            s.y = 0;
-            s.x = Math.random() * canvas.width;
-        }
+        if (s.y > canvas.height) { s.y = 0; s.x = Math.random() * canvas.width; }
     }
 
     if (screenShakeTimer > 0) screenShakeTimer--;
@@ -1353,9 +1290,7 @@ function update() {
 function draw() {
     ctx.save();
     if (screenShakeTimer > 0) {
-        const offsetX = (Math.random() - 0.5) * screenShakeIntensity;
-        const offsetY = (Math.random() - 0.5) * screenShakeIntensity;
-        ctx.translate(offsetX, offsetY);
+        ctx.translate((Math.random() - 0.5) * screenShakeIntensity, (Math.random() - 0.5) * screenShakeIntensity);
     }
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -1369,51 +1304,33 @@ function draw() {
 
     ctx.shadowBlur = 10;
     for (let b of bullets) {
-        ctx.fillStyle = b.color;
-        ctx.shadowColor = b.color;
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = b.color; ctx.shadowColor = b.color;
+        ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
     }
 
     for (let it of items) {
-        ctx.fillStyle = '#00ffff';
-        ctx.shadowColor = '#00ffff';
-        ctx.beginPath();
-        ctx.arc(it.x, it.y, it.radius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = '#00ffff'; ctx.shadowColor = '#00ffff';
+        ctx.beginPath(); ctx.arc(it.x, it.y, it.radius, 0, Math.PI * 2); ctx.fill();
     }
 
     for (let eb of enemyBullets) {
-        ctx.fillStyle = eb.color;
-        ctx.shadowColor = eb.color;
-        ctx.beginPath();
-        ctx.arc(eb.x, eb.y, eb.radius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = eb.color; ctx.shadowColor = eb.color;
+        ctx.beginPath(); ctx.arc(eb.x, eb.y, eb.radius, 0, Math.PI * 2); ctx.fill();
     }
 
     for (let e of enemies) {
-        ctx.fillStyle = e.color;
-        ctx.shadowColor = e.color;
-        ctx.beginPath();
-        ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = e.color; ctx.shadowColor = e.color;
+        ctx.beginPath(); ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2); ctx.fill();
     }
 
     if (boss !== null) {
-        ctx.fillStyle = boss.color;
-        ctx.shadowColor = boss.color;
-        ctx.beginPath();
-        ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = boss.color; ctx.shadowColor = boss.color;
+        ctx.beginPath(); ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2); ctx.fill();
         ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(boss.x, boss.y, boss.radius / 3, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.beginPath(); ctx.arc(boss.x, boss.y, boss.radius / 3, 0, Math.PI * 2); ctx.fill();
     }
 
-    ctx.fillStyle = '#00f3ff';
-    ctx.shadowColor = '#00f3ff';
+    ctx.fillStyle = '#00f3ff'; ctx.shadowColor = '#00f3ff';
     ctx.beginPath();
     ctx.moveTo(player.x, player.y - player.radius * 1.5);
     ctx.lineTo(player.x - player.radius, player.y + player.radius);
@@ -1423,11 +1340,8 @@ function draw() {
 
     for (let p of particles) {
         ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.shadowColor = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
+        ctx.fillStyle = p.color; ctx.shadowColor = p.color;
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill();
     }
     ctx.globalAlpha = 1.0;
     ctx.shadowBlur = 0;
