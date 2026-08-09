@@ -57,7 +57,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             letter-spacing: 1px;
             background: rgba(10, 10, 20, 0.75);
@@ -75,15 +75,64 @@
             color: #ffd700 !important;
             text-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
         }
+        .btn-pause-open {
+            background: rgba(0, 243, 255, 0.2);
+            border: 1px solid #00f3ff;
+            color: #00f3ff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .btn-pause-open:hover {
+            background: #00f3ff;
+            color: #05050a;
+        }
 
-        /* モバイル用バーチャル操作パネル（初期非表示） */
+        /* ボスHPゲージ */
+        #boss-hud {
+            position: absolute;
+            top: 65px;
+            left: 20px;
+            right: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+        #boss-name {
+            font-size: 11px;
+            color: #ff0055;
+            letter-spacing: 2px;
+            font-weight: bold;
+            margin-bottom: 3px;
+            text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
+        }
+        #boss-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 0, 85, 0.5);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        #boss-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #ff0055, #ff00ab);
+            box-shadow: 0 0 10px #ff0055;
+            transition: width 0.1s linear;
+        }
+
+        /* モバイル用バーチャル操作パネル */
         #mobile-controls {
             position: absolute;
             bottom: 20px;
             left: 0;
             width: 100%;
             padding: 0 20px;
-            display: none; /* デフォルトは隠す。jsでモバイル判定時にflexにする */
+            display: none;
             justify-content: space-between;
             align-items: center;
             pointer-events: none;
@@ -172,6 +221,7 @@
             font-size: 12px;
             letter-spacing: 2px;
             text-transform: uppercase;
+            text-align: center;
         }
         .menu-box {
             background: rgba(20, 20, 40, 0.6);
@@ -370,7 +420,6 @@
             max-width: 400px;
         }
 
-        /* リセットアニメーション */
         @keyframes wipeOut {
             0% { transform: scale(1); opacity: 1; filter: hue-rotate(0deg); }
             50% { transform: scale(1.05); opacity: 0.8; filter: hue-rotate(90deg) brightness(2); }
@@ -392,9 +441,18 @@
             <div>SCORE: <span id="score-val">0</span></div>
             <div>COIN: <span id="coin-val" class="hud-coin">0</span></div>
             <div>HP: <span id="hp-val">100</span></div>
+            <button class="btn-pause-open" onclick="openPauseMenu()">PAUSE</button>
         </div>
 
-        <!-- モバイル用操作ボタン（スマホ・タブレット検知時のみ表示） -->
+        <!-- ボス用HPゲージ -->
+        <div id="boss-hud">
+            <div id="boss-name">NEON OVERLORD (BOSS)</div>
+            <div id="boss-bar-container">
+                <div id="boss-bar-fill"></div>
+            </div>
+        </div>
+
+        <!-- モバイル用操作ボタン -->
         <div id="mobile-controls">
             <div class="virtual-pad-area" id="virtual-pad">
                 <div class="virtual-stick" id="virtual-stick"></div>
@@ -426,7 +484,7 @@
         </div>
 
         <div class="menu-box">
-            <div class="menu-title">Item Shop</div>
+            <div class="menu-title">Item Shop (ステージ開始時に適用)</div>
             <div class="shop-item">
                 <div class="shop-info">
                     <div>HP増強 (Max HP +50)</div>
@@ -456,6 +514,37 @@
         <button class="btn btn-action btn-sub" onclick="openTutorial()">遊び方を見る</button>
     </div>
 
+    <!-- ポーズ画面 -->
+    <div id="pause-overlay" class="overlay hidden">
+        <h1>PAUSE</h1>
+        <div class="subtitle">ゲーム一時停止中</div>
+
+        <div class="menu-box">
+            <div class="menu-title">ポーズメニュー</div>
+            <button class="btn-action" onclick="resumeGame()" style="margin-bottom: 8px;">コンティニュー (再開)</button>
+            <button class="btn-action btn-danger" onclick="giveUpGame()">ギブアップ (終了)</button>
+        </div>
+
+        <div class="menu-box">
+            <div class="menu-title">緊急アイテム使用 (次回ボス戦・ステージ用)</div>
+            <div style="font-size: 11px; color: #b0b0c0; margin-bottom: 8px;">※購入したアイテムは即座に反映されず、次回戦闘やステージから効果を発揮します。</div>
+            <div class="shop-item">
+                <div class="shop-info">
+                    <div>HP増強購入 (+50)</div>
+                    <div id="pause-item-hp-cost">COST: 50C</div>
+                </div>
+                <button class="btn-buy" id="pause-buy-hp" onclick="buyItem('hp')">購入</button>
+            </div>
+            <div class="shop-item">
+                <div class="shop-info">
+                    <div>連射向上購入</div>
+                    <div id="pause-item-rapid-cost">COST: 100C</div>
+                </div>
+                <button class="btn-buy" id="pause-buy-rapid" onclick="buyItem('rapid')">購入</button>
+            </div>
+        </div>
+    </div>
+
     <!-- チュートリアルスライド画面 -->
     <div id="tutorial-overlay" class="overlay hidden">
         <h1>HOW TO PLAY</h1>
@@ -471,22 +560,22 @@
         </div>
 
         <div class="tutorial-slide" id="slide-1">
-            <div class="slide-icon">⭐</div>
-            <div class="slide-title">2. 難易度選択</div>
+            <div class="slide-icon">👑</div>
+            <div class="slide-title">2. ボス戦とポーズ</div>
             <div class="slide-desc">
-                ★✰✰ (NORMAL)、★★✰ (HARD)、<br>
-                ★★★ (INSANE) の3段階から選択可能。<br>
-                腕前に合わせた難易度で挑もう！
+                雑魚敵をたくさん倒すと、強力なボスが出現！<br>
+                プレイ中に「PAUSE」から一時停止可能。<br>
+                アイテムはその場で即座には効果が出ません。
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-2">
-            <div class="slide-icon">💾</div>
-            <div class="slide-title">3. セーブとバックアップ</div>
+            <div class="slide-icon">💰</div>
+            <div class="slide-title">3. 高得点と報酬</div>
             <div class="slide-desc">
-                コインや強化は自動保存されます。<br>
-                メニューの「コード出力/読込」で<br>
-                データのバックアップもバッチリ！
+                報酬は少なめに調整されています。<br>
+                より高得点を叩き出して大量コインを稼ぎ、<br>
+                自機を強力にアップグレードしよう！
             </div>
         </div>
 
@@ -512,7 +601,10 @@ const scoreEl = document.getElementById('score-val');
 const coinEl = document.getElementById('coin-val');
 const hpEl = document.getElementById('hp-val');
 const overlay = document.getElementById('main-overlay');
+const pauseOverlay = document.getElementById('pause-overlay');
 const tutorialOverlay = document.getElementById('tutorial-overlay');
+const bossHud = document.getElementById('boss-hud');
+const bossBarFill = document.getElementById('boss-bar-fill');
 
 // モバイル端末判定ロジック
 function isMobileDevice() {
@@ -523,7 +615,6 @@ function isMobileDevice() {
 
 let isMobile = isMobileDevice();
 
-// モバイルの場合のみ操作パネルを表示し、説明文をタッチ用に切り替え
 if (isMobile) {
     document.getElementById('mobile-controls').style.display = 'flex';
     document.getElementById('tutorial-desc-text').innerHTML = 
@@ -592,7 +683,6 @@ function saveGameData() {
     localStorage.setItem('neon_striker_save', JSON.stringify(gameData));
 }
 
-// 3段階確認付きセーブデータリセット機能
 function confirmResetStep1() {
     if (confirm("【第1段階】\nセーブデータを消しますか？")) {
         confirmResetStep2();
@@ -624,7 +714,6 @@ function executeResetAnimation() {
     }, 600);
 }
 
-// バックアップ機能
 function exportSave() {
     const dataStr = btoa(JSON.stringify(gameData));
     prompt("セーブデータのバックアップコードです。コピーして保存してください：", dataStr);
@@ -678,11 +767,19 @@ function getRapidCost() { return 100 + gameData.rapidLevel * 60; }
 function updateShopUI() {
     document.getElementById('item-hp-cost').innerText = `COST: ${getHpCost()}C (Lv.${gameData.maxHpLevel})`;
     document.getElementById('item-rapid-cost').innerText = `COST: ${getRapidCost()}C (Lv.${gameData.rapidLevel})`;
+    document.getElementById('pause-item-hp-cost').innerText = `COST: ${getHpCost()}C (Lv.${gameData.maxHpLevel})`;
+    document.getElementById('pause-item-rapid-cost').innerText = `COST: ${getRapidCost()}C (Lv.${gameData.rapidLevel})`;
     
-    document.getElementById('buy-hp').disabled = gameData.coins < getHpCost();
-    document.getElementById('buy-rapid').disabled = gameData.coins < getRapidCost();
+    const hpDisabled = gameData.coins < getHpCost();
+    const rapidDisabled = gameData.coins < getRapidCost();
+    
+    document.getElementById('buy-hp').disabled = hpDisabled;
+    document.getElementById('buy-rapid').disabled = rapidDisabled;
+    document.getElementById('pause-buy-hp').disabled = hpDisabled;
+    document.getElementById('pause-buy-rapid').disabled = rapidDisabled;
 }
 
+// アイテム購入（すぐに効果を発揮させず、次回戦闘・ステージやステータスにのみ蓄積）
 function buyItem(type) {
     if (type === 'hp') {
         const cost = getHpCost();
@@ -705,6 +802,7 @@ function buyItem(type) {
 loadGameData();
 
 let gameRunning = false;
+let isPaused = false;
 let score = 0;
 let maxHp = 100;
 let hp = 100;
@@ -718,8 +816,12 @@ let screenShakeIntensity = 0;
 let player = {};
 let bullets = [];
 let enemies = [];
+let boss = null; // ボスオブジェクト
 let particles = [];
 let stars = [];
+
+let defeatedEnemyCount = 0; // 倒した敵のカウント（ボス出現用）
+const BOSS_SPAWN_THRESHOLD = 15; // 敵を15体倒すとボス出現
 
 for (let i = 0; i < 100; i++) {
     stars.push({
@@ -730,19 +832,25 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
-// 入力イベント（PC & モバイル共通対応）
+// 入力イベント
 window.addEventListener('mousemove', (e) => {
-    if (isMobile) return; // モバイル時はマウス無効
+    if (isMobile || isPaused) return;
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
 });
-window.addEventListener('mousedown', () => { if (!isMobile) isMouseDown = true; });
+window.addEventListener('mousedown', () => { if (!isMobile && !isPaused) isMouseDown = true; });
 window.addEventListener('mouseup', () => { if (!isMobile) isMouseDown = false; });
-window.addEventListener('keydown', (e) => { if (e.code === 'Space') isMouseDown = true; });
+window.addEventListener('keydown', (e) => { 
+    if (e.code === 'Space' && !isPaused) isMouseDown = true; 
+    if (e.code === 'KeyP' && gameRunning) {
+        if (isPaused) resumeGame();
+        else openPauseMenu();
+    }
+});
 window.addEventListener('keyup', (e) => { if (e.code === 'Space') isMouseDown = false; });
 
-// モバイル用バーチャルパッドのタッチ操作ロジック
+// モバイル用バーチャルパッド
 const virtualPad = document.getElementById('virtual-pad');
 const virtualStick = document.getElementById('virtual-stick');
 const virtualShootBtn = document.getElementById('virtual-shoot-btn');
@@ -750,6 +858,7 @@ const virtualShootBtn = document.getElementById('virtual-shoot-btn');
 let touchId = null;
 virtualPad.addEventListener('touchstart', (e) => {
     e.preventDefault();
+    if (isPaused) return;
     const touch = e.changedTouches[0];
     touchId = touch.identifier;
     updateStickPosition(touch);
@@ -757,6 +866,7 @@ virtualPad.addEventListener('touchstart', (e) => {
 
 virtualPad.addEventListener('touchmove', (e) => {
     e.preventDefault();
+    if (isPaused) return;
     for (let i = 0; i < e.changedTouches.length; i++) {
         if (e.changedTouches[i].identifier === touchId) {
             updateStickPosition(e.changedTouches[i]);
@@ -792,14 +902,13 @@ function updateStickPosition(touch) {
 
     virtualStick.style.transform = `translate(${dx}px, ${dy}px)`;
 
-    // 自機の目標位置をバーチャルパッドの傾きに応じて移動スピードを加算
     mouseX = player.x + (dx / maxRadius) * 12;
     mouseY = player.y + (dy / maxRadius) * 12;
 }
 
-// ショットボタン
 virtualShootBtn.addEventListener('touchstart', (e) => {
     e.preventDefault();
+    if (isPaused) return;
     isMouseDown = true;
     virtualShootBtn.classList.add('touching');
 });
@@ -808,6 +917,25 @@ virtualShootBtn.addEventListener('touchend', (e) => {
     isMouseDown = false;
     virtualShootBtn.classList.remove('touching');
 });
+
+// ポーズメニュー制御
+function openPauseMenu() {
+    if (!gameRunning) return;
+    isPaused = true;
+    isMouseDown = false;
+    pauseOverlay.classList.remove('hidden');
+}
+
+function resumeGame() {
+    isPaused = false;
+    pauseOverlay.classList.add('hidden');
+}
+
+function giveUpGame() {
+    isPaused = false;
+    pauseOverlay.classList.add('hidden');
+    endGame("GIVE UP (ギブアップ)");
+}
 
 function startGame() {
     if (startMode === 'new') {
@@ -819,9 +947,12 @@ function startGame() {
 
     score = 0;
     coinsEarnedThisRun = 0;
+    defeatedEnemyCount = 0;
     bullets = [];
     enemies = [];
+    boss = null;
     particles = [];
+    bossHud.style.display = 'none';
 
     scoreEl.innerText = score;
     coinEl.innerText = gameData.coins;
@@ -839,18 +970,24 @@ function startGame() {
 
     overlay.classList.add('hidden');
     gameRunning = true;
+    isPaused = false;
     requestAnimationFrame(gameLoop);
 }
 
-function gameOver() {
+function endGame(resultTitle) {
     gameRunning = false;
     isMouseDown = false;
+    bossHud.style.display = 'none';
     
+    // 報酬を少なく調整（獲得スコアのほんの一部、かつ難易度係数も控えめに）
+    const earnedReward = Math.floor((score / 200) * (0.5 + difficulty * 0.2));
+    coinsEarnedThisRun = earnedReward;
+
     gameData.coins += coinsEarnedThisRun;
     saveGameData();
 
-    document.querySelector('#main-overlay h1').innerText = "GAME OVER";
-    document.querySelector('#main-overlay .subtitle').innerText = `スコア: ${score} / 獲得コイン: +${coinsEarnedThisRun}C`;
+    document.querySelector('#main-overlay h1').innerText = resultTitle;
+    document.querySelector('#main-overlay .subtitle').innerText = `最終スコア: ${score} / 獲得報酬: +${coinsEarnedThisRun}C`;
     
     updateShopUI();
     coinEl.innerText = gameData.coins;
@@ -881,6 +1018,8 @@ function createParticles(x, y, color, count = 10) {
 
 let spawnTimer = 0;
 function spawnEnemies() {
+    if (boss !== null) return; // ボス戦中は雑魚を出さない
+
     spawnTimer++;
     let threshold = 25;
     let speedMultiplier = 1.0;
@@ -903,7 +1042,27 @@ function spawnEnemies() {
     }
 }
 
+// ボス出現処理
+function spawnBoss() {
+    let baseBossHp = 50 + difficulty * 25;
+    boss = {
+        x: canvas.width / 2,
+        y: -60,
+        targetY: 100,
+        radius: 35,
+        maxHp: baseBossHp,
+        hp: baseBossHp,
+        speed: 2,
+        attackTimer: 0,
+        color: '#ff00ff'
+    };
+    bossHud.style.display = 'flex';
+    bossBarFill.style.width = '100%';
+}
+
 function update() {
+    if (isPaused) return;
+
     player.x += (mouseX - player.x) * 0.2;
     player.y += (mouseY - player.y) * 0.2;
     player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
@@ -930,7 +1089,60 @@ function update() {
         if (b.y < 0) bullets.splice(i, 1);
     }
 
-    spawnEnemies();
+    // ボスが存在しないときは雑魚を出現させ、撃破数を監視
+    if (boss === null) {
+        spawnEnemies();
+    } else {
+        // ボス登場・行動ロジック
+        if (boss.y < boss.targetY) {
+            boss.y += boss.speed;
+        } else {
+            // 左右に移動
+            boss.x += Math.sin(Date.now() / 400) * (2 + difficulty * 0.5);
+        }
+
+        // ボスとの当たり判定（自機）
+        const distToPlayer = Math.hypot(player.x - boss.x, player.y - boss.y);
+        if (distToPlayer < player.radius + boss.radius) {
+            hp -= 35;
+            hpEl.innerText = Math.max(0, hp);
+            createParticles(player.x, player.y, '#ff0055', 20);
+            triggerShake(15, 8);
+            if (hp <= 0) {
+                endGame("GAME OVER");
+                return;
+            }
+        }
+
+        // 弾とボスの当たり判定
+        for (let j = bullets.length - 1; j >= 0; j--) {
+            let b = bullets[j];
+            const dist = Math.hypot(b.x - boss.x, b.y - boss.y);
+            if (dist < b.radius + boss.radius) {
+                boss.hp--;
+                createParticles(b.x, b.y, '#ff00f3', 5);
+                bullets.splice(j, 1);
+
+                let hpPercent = Math.max(0, (boss.hp / boss.maxHp) * 100);
+                bossBarFill.style.width = hpPercent + '%';
+
+                if (boss.hp <= 0) {
+                    createParticles(boss.x, boss.y, '#ff00ff', 40);
+                    score += 2000 * difficulty;
+                    scoreEl.innerText = score;
+                    triggerShake(25, 12);
+                    boss = null;
+                    bossHud.style.display = 'none';
+
+                    // ボス撃破でクリア・結果画面へ
+                    endGame("VICTORY! (ボス撃破)");
+                    return;
+                }
+            }
+        }
+    }
+
+    // 雑魚敵の更新と当たり判定
     for (let i = enemies.length - 1; i >= 0; i--) {
         let e = enemies[i];
         e.y += e.speed;
@@ -949,7 +1161,8 @@ function update() {
             enemies.splice(i, 1);
 
             if (hp <= 0) {
-                gameOver();
+                endGame("GAME OVER");
+                return;
             }
             continue;
         }
@@ -966,14 +1179,15 @@ function update() {
                     createParticles(e.x, e.y, e.color, 15);
                     const addScore = (e.type === 'heavy' ? 300 : 100) * difficulty;
                     score += addScore;
-                    
-                    const addCoin = (e.type === 'heavy' ? 3 : 1) * difficulty;
-                    coinsEarnedThisRun += addCoin;
-
                     scoreEl.innerText = score;
-                    coinEl.innerText = gameData.coins + coinsEarnedThisRun;
                     triggerShake(5, 3);
                     enemies.splice(i, 1);
+
+                    // 敵撃破カウント加算
+                    defeatedEnemyCount++;
+                    if (defeatedEnemyCount >= BOSS_SPAWN_THRESHOLD && boss === null) {
+                        spawnBoss();
+                    }
                 }
                 break;
             }
@@ -1033,6 +1247,20 @@ function draw() {
         ctx.fill();
     }
 
+    // ボスの描画
+    if (boss !== null) {
+        ctx.fillStyle = boss.color;
+        ctx.shadowColor = boss.color;
+        ctx.beginPath();
+        ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
+        ctx.fill();
+        // ボスのコア意匠
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(boss.x, boss.y, boss.radius / 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
     ctx.fillStyle = '#00f3ff';
     ctx.shadowColor = '#00f3ff';
     ctx.beginPath();
@@ -1046,9 +1274,12 @@ function draw() {
         ctx.globalAlpha = p.alpha;
         ctx.fillStyle = p.color;
         ctx.shadowColor = p.color;
-        ctx.fillRect(p.x, p.y, p.size, p.size);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
     }
     ctx.globalAlpha = 1.0;
+    ctx.shadowBlur = 0;
 
     ctx.restore();
 }
@@ -1060,6 +1291,5 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 </script>
-
 </body>
 </html>
