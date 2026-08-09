@@ -59,11 +59,8 @@
         }
         .hud-top {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 1px;
+            flex-direction: column;
+            gap: 4px;
             background: rgba(10, 10, 20, 0.85);
             padding: 8px 12px;
             border-radius: 8px;
@@ -72,7 +69,15 @@
             text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
             pointer-events: auto;
         }
-        .hud-top span {
+        .hud-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .hud-row span {
             color: #00f3ff;
         }
         .hud-coin {
@@ -83,10 +88,10 @@
             background: rgba(0, 243, 255, 0.2);
             border: 1px solid #00f3ff;
             color: #00f3ff;
-            padding: 3px 6px;
+            padding: 2px 6px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: bold;
         }
         .btn-pause-open:hover {
@@ -94,10 +99,28 @@
             color: #05050a;
         }
 
+        /* 残弾ゲージ */
+        .ammo-bar-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.4);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 2px;
+        }
+        .ammo-bar-fill {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #00f3ff, #0077ff);
+            box-shadow: 0 0 8px #00f3ff;
+            transition: width 0.05s linear;
+        }
+
         /* ボスHPゲージ */
         #boss-hud {
             position: absolute;
-            top: 55px;
+            top: 65px;
             left: 16px;
             right: 16px;
             display: none;
@@ -127,63 +150,6 @@
             background: linear-gradient(90deg, #ff0055, #ff00ab);
             box-shadow: 0 0 10px #ff0055;
             transition: width 0.1s linear;
-        }
-
-        /* モバイル用バーチャル操作パネル */
-        #mobile-controls {
-            position: absolute;
-            bottom: 16px;
-            left: 0;
-            width: 100%;
-            padding: 0 16px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            pointer-events: none;
-            z-index: 20;
-        }
-        .virtual-pad-area {
-            width: 120px;
-            height: 120px;
-            background: rgba(0, 243, 255, 0.05);
-            border: 2px dashed rgba(0, 243, 255, 0.3);
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: auto;
-            position: relative;
-            backdrop-filter: blur(2px);
-        }
-        .virtual-stick {
-            width: 50px;
-            height: 50px;
-            background: rgba(0, 243, 255, 0.3);
-            border: 2px solid #00f3ff;
-            border-radius: 50%;
-            position: absolute;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-            transition: transform 0.05s linear;
-        }
-        .virtual-btn-shoot {
-            width: 80px;
-            height: 80px;
-            background: rgba(255, 0, 127, 0.2);
-            border: 2px solid #ff007f;
-            border-radius: 50%;
-            color: #fff;
-            font-weight: bold;
-            font-size: 13px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            pointer-events: auto;
-            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
-            text-shadow: 0 0 5px #ff007f;
-        }
-        .virtual-btn-shoot:active, .virtual-btn-shoot.touching {
-            background: rgba(255, 0, 127, 0.6);
-            transform: scale(0.95);
         }
 
         /* 画面オーバーレイ共通 */
@@ -478,10 +444,21 @@
     <!-- HUD最優先レイヤー -->
     <div id="ui-layer">
         <div class="hud-top">
-            <div>SCORE: <span id="score-val">0</span></div>
-            <div>COIN: <span id="coin-val" class="hud-coin">0</span></div>
-            <div>HP: <span id="hp-val">100</span></div>
-            <button class="btn-pause-open" onclick="openPauseMenu()">PAUSE</button>
+            <div class="hud-row">
+                <div>SCORE: <span id="score-val">0</span></div>
+                <div>COIN: <span id="coin-val" class="hud-coin">0</span></div>
+                <div>HP: <span id="hp-val">100</span></div>
+                <button class="btn-pause-open" onclick="openPauseMenu()">PAUSE</button>
+            </div>
+            <div>
+                <div class="hud-row" style="font-size: 9px; color: #aaa;">
+                    <span>AMMO (エネルギー)</span>
+                    <span id="ammo-val">100%</span>
+                </div>
+                <div class="ammo-bar-container">
+                    <div id="ammo-bar-fill" class="ammo-bar-fill"></div>
+                </div>
+            </div>
         </div>
 
         <!-- ボス用HPゲージ -->
@@ -490,14 +467,6 @@
             <div id="boss-bar-container">
                 <div id="boss-bar-fill"></div>
             </div>
-        </div>
-
-        <!-- モバイル用操作ボタン -->
-        <div id="mobile-controls">
-            <div class="virtual-pad-area" id="virtual-pad">
-                <div class="virtual-stick" id="virtual-stick"></div>
-            </div>
-            <div class="virtual-btn-shoot" id="virtual-shoot-btn">SHOOT</div>
         </div>
     </div>
 
@@ -517,11 +486,11 @@
             </div>
 
             <div class="menu-box">
-                <div class="menu-title">Difficulty (難易度)</div>
+                <div class="menu-title">Difficulty (難易度) - タンク容量変化</div>
                 <div class="btn-group">
-                    <button class="btn active" id="diff-1" onclick="setDifficulty(1)">★✰✰</button>
-                    <button class="btn" id="diff-2" onclick="setDifficulty(2)">★★✰</button>
-                    <button class="btn" id="diff-3" onclick="setDifficulty(3)">★★★</button>
+                    <button class="btn active" id="diff-1" onclick="setDifficulty(1)">★✰✰ (小)</button>
+                    <button class="btn" id="diff-2" onclick="setDifficulty(2)">★★✰ (中)</button>
+                    <button class="btn" id="diff-3" onclick="setDifficulty(3)">★★★ (大)</button>
                 </div>
             </div>
 
@@ -580,7 +549,7 @@
         </div>
 
         <div class="menu-box">
-            <div class="menu-title">緊急アイテム購入 (即時反映されません)</div>
+            <div class="menu-title">緊急アイテム購入</div>
             <div class="shop-item">
                 <div class="shop-info">
                     <div>HP増強購入 (+50)</div>
@@ -606,29 +575,28 @@
         <div class="tutorial-slide active" id="slide-0">
             <div class="slide-icon">🚀</div>
             <div class="slide-title">1. 操作方法</div>
-            <div class="slide-desc" id="tutorial-desc-text">
-                マウス移動で自機が追従します。<br>
-                左クリックで自動ビームを連射して敵を撃破！
+            <div class="slide-desc">
+                画面のどこをスライドしても自機が追従します。<br>
+                スライド（長押し）している間、自動でビームが連射されます！
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-1">
-            <div class="slide-icon">👑</div>
-            <div class="slide-title">2. ボス戦とポーズ</div>
+            <div class="slide-icon">⚡</div>
+            <div class="slide-title">2. エネルギーと補充</div>
             <div class="slide-desc">
-                雑魚をたくさん倒すとボスが出現し、激しい弾幕を放ちます！<br>
-                「PAUSE」からいつでも一時停止でき、<br>
-                購入したアイテムは次回以降に効果を発揮します。
+                連射すると上部のエネルギーが減少します。<br>
+                難易度が低いほどタンクは小さく、高いほど大容量です。<br>
+                敵が落とす「青い球アイテム」を拾うと全回復！
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-2">
-            <div class="slide-icon">💰</div>
-            <div class="slide-title">3. 高得点と報酬</div>
+            <div class="slide-icon">👑</div>
+            <div class="slide-title">3. ボス戦と強化</div>
             <div class="slide-desc">
-                報酬は少なめに調整されています。<br>
-                より高得点を叩き出して大量コインを稼ぎ、<br>
-                自機を強力にアップグレードしよう！
+                雑魚を倒していくとボスが出現！<br>
+                コインを稼いでショップで自機を強化しよう。
             </div>
         </div>
 
@@ -653,6 +621,9 @@ const ctx = canvas.getContext('2d');
 const scoreEl = document.getElementById('score-val');
 const coinEl = document.getElementById('coin-val');
 const hpEl = document.getElementById('hp-val');
+const ammoEl = document.getElementById('ammo-val');
+const ammoBarFill = document.getElementById('ammo-bar-fill');
+
 const overlay = document.getElementById('main-overlay');
 const menuMainTitle = document.getElementById('menu-main-title');
 const menuSubtitle = document.getElementById('menu-subtitle');
@@ -665,20 +636,6 @@ const pauseOverlay = document.getElementById('pause-overlay');
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 const bossHud = document.getElementById('boss-hud');
 const bossBarFill = document.getElementById('boss-bar-fill');
-
-function isMobileDevice() {
-    return (('ontouchstart' in window) ||
-            (navigator.maxTouchPoints > 0) ||
-            (navigator.msMaxTouchPoints > 0));
-}
-
-let isMobile = isMobileDevice();
-
-if (isMobile) {
-    document.getElementById('mobile-controls').style.display = 'flex';
-    document.getElementById('tutorial-desc-text').innerHTML = 
-        '左下の仮想パッドスライドで自機移動。<br>右下の「SHOOT」ボタンでビーム発射！';
-}
 
 let currentSlide = 0;
 const totalSlides = 3;
@@ -837,6 +794,8 @@ function updateShopUI() {
     document.getElementById('pause-buy-rapid').disabled = rapidDisabled;
 }
 
+loadGameData();
+
 function buyItem(type) {
     if (type === 'hp') {
         const cost = getHpCost();
@@ -856,17 +815,21 @@ function buyItem(type) {
     updateShopUI();
 }
 
-loadGameData();
-
 let gameRunning = false;
 let isPaused = false;
 let score = 0;
 let maxHp = 100;
 let hp = 100;
 let coinsEarnedThisRun = 0;
+
+// 残弾（エネルギー）関連
+let maxAmmo = 100;
+let ammo = 100;
+
 let mouseX = canvas.width / 2;
 let mouseY = canvas.height - 100;
-let isMouseDown = false;
+let isTouchingOrClicking = false;
+
 let screenShakeTimer = 0;
 let screenShakeIntensity = 0;
 
@@ -874,6 +837,7 @@ let player = {};
 let bullets = [];
 let enemyBullets = [];
 let enemies = [];
+let items = [];
 let boss = null;
 let particles = [];
 let stars = [];
@@ -890,94 +854,55 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
-window.addEventListener('mousemove', (e) => {
-    if (isMobile || isPaused) return;
+// 画面全体のどこをスライドしても反応
+function updatePointerPosition(clientX, clientY) {
+    if (isPaused) return;
     const rect = canvas.getBoundingClientRect();
-    mouseX = e.clientX - rect.left;
-    mouseY = e.clientY - rect.top;
+    mouseX = clientX - rect.left;
+    mouseY = clientY - rect.top;
+}
+
+window.addEventListener('mousemove', (e) => {
+    updatePointerPosition(e.clientX, e.clientY);
 });
-window.addEventListener('mousedown', () => { if (!isMobile && !isPaused) isMouseDown = true; });
-window.addEventListener('mouseup', () => { if (!isMobile) isMouseDown = false; });
+window.addEventListener('mousedown', (e) => {
+    if (isPaused) return;
+    isTouchingOrClicking = true;
+    updatePointerPosition(e.clientX, e.clientY);
+});
+window.addEventListener('mouseup', () => {
+    isTouchingOrClicking = false;
+});
+
+window.addEventListener('touchstart', (e) => {
+    if (isPaused) return;
+    isTouchingOrClicking = true;
+    const touch = e.changedTouches[0];
+    updatePointerPosition(touch.clientX, touch.clientY);
+});
+window.addEventListener('touchmove', (e) => {
+    if (isPaused) return;
+    const touch = e.changedTouches[0];
+    updatePointerPosition(touch.clientX, touch.clientY);
+});
+window.addEventListener('touchend', () => {
+    isTouchingOrClicking = false;
+});
+window.addEventListener('touchcancel', () => {
+    isTouchingOrClicking = false;
+});
+
 window.addEventListener('keydown', (e) => { 
-    if (e.code === 'Space' && !isPaused) isMouseDown = true; 
     if (e.code === 'KeyP' && gameRunning) {
         if (isPaused) resumeGame();
         else openPauseMenu();
     }
 });
-window.addEventListener('keyup', (e) => { if (e.code === 'Space') isMouseDown = false; });
-
-const virtualPad = document.getElementById('virtual-pad');
-const virtualStick = document.getElementById('virtual-stick');
-const virtualShootBtn = document.getElementById('virtual-shoot-btn');
-
-let touchId = null;
-virtualPad.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    if (isPaused) return;
-    const touch = e.changedTouches[0];
-    touchId = touch.identifier;
-    updateStickPosition(touch);
-});
-
-virtualPad.addEventListener('touchmove', (e) => {
-    e.preventDefault();
-    if (isPaused) return;
-    for (let i = 0; i < e.changedTouches.length; i++) {
-        if (e.changedTouches[i].identifier === touchId) {
-            updateStickPosition(e.changedTouches[i]);
-        }
-    }
-});
-
-function endVirtualTouch(e) {
-    for (let i = 0; i < e.changedTouches.length; i++) {
-        if (e.changedTouches[i].identifier === touchId) {
-            touchId = null;
-            virtualStick.style.transform = `translate(0px, 0px)`;
-        }
-    }
-}
-virtualPad.addEventListener('touchend', endVirtualTouch);
-virtualPad.addEventListener('touchcancel', endVirtualTouch);
-
-function updateStickPosition(touch) {
-    const rect = virtualPad.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    let dx = touch.clientX - centerX;
-    let dy = touch.clientY - centerY;
-    const dist = Math.hypot(dx, dy);
-    const maxRadius = 35;
-
-    if (dist > maxRadius) {
-        dx = (dx / dist) * maxRadius;
-        dy = (dy / dist) * maxRadius;
-    }
-
-    virtualStick.style.transform = `translate(${dx}px, ${dy}px)`;
-
-    mouseX = player.x + (dx / maxRadius) * 12;
-    mouseY = player.y + (dy / maxRadius) * 12;
-}
-
-virtualShootBtn.addEventListener('touchstart', (e) => {
-    e.preventDefault();
-    if (isPaused) return;
-    isMouseDown = true;
-    virtualShootBtn.classList.add('touching');
-});
-virtualShootBtn.addEventListener('touchend', (e) => {
-    e.preventDefault();
-    isMouseDown = false;
-    virtualShootBtn.classList.remove('touching');
-});
 
 function openPauseMenu() {
     if (!gameRunning) return;
     isPaused = true;
-    isMouseDown = false;
+    isTouchingOrClicking = false;
     pauseOverlay.classList.remove('hidden');
 }
 
@@ -1000,12 +925,21 @@ function startGame() {
     maxHp = 100 + gameData.maxHpLevel * 50;
     hp = maxHp;
 
+    // 難易度によってタンクの満タン量を変更
+    // 難易度1(簡単): タンク小(60), 難易度2: 中(100), 難易度3(難): 大(160)
+    if (difficulty === 1) maxAmmo = 60;
+    else if (difficulty === 2) maxAmmo = 100;
+    else maxAmmo = 160;
+
+    ammo = maxAmmo;
+
     score = 0;
     coinsEarnedThisRun = 0;
     defeatedEnemyCount = 0;
     bullets = [];
     enemyBullets = [];
     enemies = [];
+    items = [];
     boss = null;
     particles = [];
     bossHud.style.display = 'none';
@@ -1013,6 +947,8 @@ function startGame() {
     scoreEl.innerText = score;
     coinEl.innerText = gameData.coins;
     hpEl.innerText = hp;
+    ammoEl.innerText = Math.floor((ammo / maxAmmo) * 100) + '%';
+    ammoBarFill.style.width = '100%';
 
     player = {
         x: canvas.width / 2,
@@ -1032,7 +968,7 @@ function startGame() {
 
 function endGame(resultTitle) {
     gameRunning = false;
-    isMouseDown = false;
+    isTouchingOrClicking = false;
     bossHud.style.display = 'none';
     
     const earnedReward = Math.floor((score / 300) * (0.3 + difficulty * 0.15));
@@ -1041,7 +977,6 @@ function endGame(resultTitle) {
     gameData.coins += coinsEarnedThisRun;
     saveGameData();
 
-    // 結果画面用に切り替え
     menuMainTitle.innerText = resultTitle;
     menuSubtitle.innerText = "";
     resScore.innerText = score;
@@ -1055,7 +990,6 @@ function endGame(resultTitle) {
 }
 
 function returnToMenu() {
-    // スタート画面の表示に戻す
     menuMainTitle.innerText = "NEON STRIKER";
     menuSubtitle.innerText = "Ultimate Edition";
     startMenuContent.style.display = 'flex';
@@ -1138,7 +1072,9 @@ function update() {
 
     const baseCooldown = Math.max(2, 6 - gameData.rapidLevel);
     player.shootCooldown--;
-    if (isMouseDown && player.shootCooldown <= 0) {
+
+    // 画面スライド中（タッチ/クリック中）かつエネルギーがある場合に連射
+    if (isTouchingOrClicking && player.shootCooldown <= 0 && ammo > 0) {
         bullets.push({
             x: player.x,
             y: player.y - player.radius,
@@ -1148,8 +1084,15 @@ function update() {
             color: '#00f3ff'
         });
         player.shootCooldown = baseCooldown;
+        ammo = Math.max(0, ammo - 1); // 弾を1発消費
     }
 
+    // UIの弾数ゲージ更新
+    let ammoPercent = Math.max(0, (ammo / maxAmmo) * 100);
+    ammoEl.innerText = Math.floor(ammoPercent) + '%';
+    ammoBarFill.style.width = ammoPercent + '%';
+
+    // 弾丸の移動
     for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
         b.x += b.vx;
@@ -1157,6 +1100,24 @@ function update() {
         if (b.y < 0) bullets.splice(i, 1);
     }
 
+    // アイテム（エネルギー回復）の処理
+    for (let i = items.length - 1; i >= 0; i--) {
+        let it = items[i];
+        it.y += it.speed;
+        if (it.y > canvas.height + 20) {
+            items.splice(i, 1);
+            continue;
+        }
+        const distToPlayer = Math.hypot(player.x - it.x, player.y - it.y);
+        if (distToPlayer < player.radius + it.radius) {
+            // 取得：エネルギー全回復
+            ammo = maxAmmo;
+            createParticles(player.x, player.y, '#00f3ff', 15);
+            items.splice(i, 1);
+        }
+    }
+
+    // 敵弾の処理
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
         let eb = enemyBullets[i];
         eb.x += eb.vx;
@@ -1182,6 +1143,7 @@ function update() {
         }
     }
 
+    // ボスの処理
     if (boss === null) {
         spawnEnemies();
     } else {
@@ -1250,6 +1212,7 @@ function update() {
         }
     }
 
+    // 雑魚敵の処理
     for (let i = enemies.length - 1; i >= 0; i--) {
         let e = enemies[i];
         e.y += e.speed;
@@ -1288,6 +1251,17 @@ function update() {
                     score += addScore;
                     scoreEl.innerText = score;
                     triggerShake(5, 3);
+
+                    // 敵撃破時に一定確率でエネルギー回復アイテムをドロップ
+                    if (Math.random() < 0.35) {
+                        items.push({
+                            x: e.x,
+                            y: e.y,
+                            radius: 8,
+                            speed: 1.5
+                        });
+                    }
+
                     enemies.splice(i, 1);
 
                     defeatedEnemyCount++;
@@ -1342,6 +1316,15 @@ function draw() {
         ctx.shadowColor = b.color;
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // アイテム（エネルギー回復）の描画
+    for (let it of items) {
+        ctx.fillStyle = '#00ffff';
+        ctx.shadowColor = '#00ffff';
+        ctx.beginPath();
+        ctx.arc(it.x, it.y, it.radius, 0, Math.PI * 2);
         ctx.fill();
     }
 
