@@ -484,7 +484,7 @@
         </div>
 
         <div class="menu-box">
-            <div class="menu-title">Item Shop (ステージ開始時に適用)</div>
+            <div class="menu-title">Item Shop (次回以降に効果適用)</div>
             <div class="shop-item">
                 <div class="shop-info">
                     <div>HP増強 (Max HP +50)</div>
@@ -526,8 +526,7 @@
         </div>
 
         <div class="menu-box">
-            <div class="menu-title">緊急アイテム使用 (次回ボス戦・ステージ用)</div>
-            <div style="font-size: 11px; color: #b0b0c0; margin-bottom: 8px;">※購入したアイテムは即座に反映されず、次回戦闘やステージから効果を発揮します。</div>
+            <div class="menu-title">緊急アイテム購入 (即時反映されません)</div>
             <div class="shop-item">
                 <div class="shop-info">
                     <div>HP増強購入 (+50)</div>
@@ -563,9 +562,9 @@
             <div class="slide-icon">👑</div>
             <div class="slide-title">2. ボス戦とポーズ</div>
             <div class="slide-desc">
-                雑魚敵をたくさん倒すと、強力なボスが出現！<br>
-                プレイ中に「PAUSE」から一時停止可能。<br>
-                アイテムはその場で即座には効果が出ません。
+                雑魚をたくさん倒すとボスが出現し、激しい弾幕を放ちます！<br>
+                「PAUSE」からいつでも一時停止でき、<br>
+                購入したアイテムは次回以降に効果を発揮します。
             </div>
         </div>
 
@@ -606,7 +605,6 @@ const tutorialOverlay = document.getElementById('tutorial-overlay');
 const bossHud = document.getElementById('boss-hud');
 const bossBarFill = document.getElementById('boss-bar-fill');
 
-// モバイル端末判定ロジック
 function isMobileDevice() {
     return (('ontouchstart' in window) ||
             (navigator.maxTouchPoints > 0) ||
@@ -655,7 +653,6 @@ function updateSlideUI() {
     document.getElementById('btn-next').innerText = currentSlide === totalSlides - 1 ? '完了' : '次へ';
 }
 
-// ゲームデータ
 let gameData = {
     coins: 0,
     maxHpLevel: 0,
@@ -779,7 +776,6 @@ function updateShopUI() {
     document.getElementById('pause-buy-rapid').disabled = rapidDisabled;
 }
 
-// アイテム購入（すぐに効果を発揮させず、次回戦闘・ステージやステータスにのみ蓄積）
 function buyItem(type) {
     if (type === 'hp') {
         const cost = getHpCost();
@@ -815,13 +811,15 @@ let screenShakeIntensity = 0;
 
 let player = {};
 let bullets = [];
+let enemyBullets = [];
 let enemies = [];
-let boss = null; // ボスオブジェクト
+let boss = null;
 let particles = [];
 let stars = [];
 
-let defeatedEnemyCount = 0; // 倒した敵のカウント（ボス出現用）
-const BOSS_SPAWN_THRESHOLD = 15; // 敵を15体倒すとボス出現
+let defeatedEnemyCount = 0;
+// ボス出現までの道のりを長く調整（40体に増加）
+const BOSS_SPAWN_THRESHOLD = 40;
 
 for (let i = 0; i < 100; i++) {
     stars.push({
@@ -832,7 +830,6 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
-// 入力イベント
 window.addEventListener('mousemove', (e) => {
     if (isMobile || isPaused) return;
     const rect = canvas.getBoundingClientRect();
@@ -850,7 +847,6 @@ window.addEventListener('keydown', (e) => {
 });
 window.addEventListener('keyup', (e) => { if (e.code === 'Space') isMouseDown = false; });
 
-// モバイル用バーチャルパッド
 const virtualPad = document.getElementById('virtual-pad');
 const virtualStick = document.getElementById('virtual-stick');
 const virtualShootBtn = document.getElementById('virtual-shoot-btn');
@@ -918,7 +914,6 @@ virtualShootBtn.addEventListener('touchend', (e) => {
     virtualShootBtn.classList.remove('touching');
 });
 
-// ポーズメニュー制御
 function openPauseMenu() {
     if (!gameRunning) return;
     isPaused = true;
@@ -949,6 +944,7 @@ function startGame() {
     coinsEarnedThisRun = 0;
     defeatedEnemyCount = 0;
     bullets = [];
+    enemyBullets = [];
     enemies = [];
     boss = null;
     particles = [];
@@ -979,8 +975,7 @@ function endGame(resultTitle) {
     isMouseDown = false;
     bossHud.style.display = 'none';
     
-    // 報酬を少なく調整（獲得スコアのほんの一部、かつ難易度係数も控えめに）
-    const earnedReward = Math.floor((score / 200) * (0.5 + difficulty * 0.2));
+    const earnedReward = Math.floor((score / 300) * (0.3 + difficulty * 0.15));
     coinsEarnedThisRun = earnedReward;
 
     gameData.coins += coinsEarnedThisRun;
@@ -1018,7 +1013,7 @@ function createParticles(x, y, color, count = 10) {
 
 let spawnTimer = 0;
 function spawnEnemies() {
-    if (boss !== null) return; // ボス戦中は雑魚を出さない
+    if (boss !== null) return;
 
     spawnTimer++;
     let threshold = 25;
@@ -1042,9 +1037,8 @@ function spawnEnemies() {
     }
 }
 
-// ボス出現処理
 function spawnBoss() {
-    let baseBossHp = 50 + difficulty * 25;
+    let baseBossHp = 60 + difficulty * 30;
     boss = {
         x: canvas.width / 2,
         y: -60,
@@ -1089,19 +1083,61 @@ function update() {
         if (b.y < 0) bullets.splice(i, 1);
     }
 
-    // ボスが存在しないときは雑魚を出現させ、撃破数を監視
+    for (let i = enemyBullets.length - 1; i >= 0; i--) {
+        let eb = enemyBullets[i];
+        eb.x += eb.vx;
+        eb.y += eb.vy;
+
+        if (eb.y > canvas.height + 20 || eb.y < -20 || eb.x < -20 || eb.x > canvas.width + 20) {
+            enemyBullets.splice(i, 1);
+            continue;
+        }
+
+        const distToPlayer = Math.hypot(player.x - eb.x, player.y - eb.y);
+        if (distToPlayer < player.radius + eb.radius) {
+            hp -= eb.damage;
+            hpEl.innerText = Math.max(0, hp);
+            createParticles(player.x, player.y, '#ff0055', 12);
+            triggerShake(10, 5);
+            enemyBullets.splice(i, 1);
+
+            if (hp <= 0) {
+                endGame("GAME OVER");
+                return;
+            }
+        }
+    }
+
     if (boss === null) {
         spawnEnemies();
     } else {
-        // ボス登場・行動ロジック
         if (boss.y < boss.targetY) {
             boss.y += boss.speed;
         } else {
-            // 左右に移動
             boss.x += Math.sin(Date.now() / 400) * (2 + difficulty * 0.5);
         }
 
-        // ボスとの当たり判定（自機）
+        boss.attackTimer++;
+        let attackInterval = Math.max(25, 65 - difficulty * 12);
+        if (boss.attackTimer >= attackInterval) {
+            boss.attackTimer = 0;
+            const angleToPlayer = Math.atan2(player.y - boss.y, player.x - boss.x);
+            let spread = 0.3;
+            for (let k = -1; k <= 1; k++) {
+                let a = angleToPlayer + k * spread;
+                let speed = 4 + difficulty * 0.5;
+                enemyBullets.push({
+                    x: boss.x,
+                    y: boss.y + boss.radius,
+                    vx: Math.cos(a) * speed,
+                    vy: Math.sin(a) * speed,
+                    radius: 5,
+                    damage: 15,
+                    color: '#ff0055'
+                });
+            }
+        }
+
         const distToPlayer = Math.hypot(player.x - boss.x, player.y - boss.y);
         if (distToPlayer < player.radius + boss.radius) {
             hp -= 35;
@@ -1114,7 +1150,6 @@ function update() {
             }
         }
 
-        // 弾とボスの当たり判定
         for (let j = bullets.length - 1; j >= 0; j--) {
             let b = bullets[j];
             const dist = Math.hypot(b.x - boss.x, b.y - boss.y);
@@ -1134,7 +1169,6 @@ function update() {
                     boss = null;
                     bossHud.style.display = 'none';
 
-                    // ボス撃破でクリア・結果画面へ
                     endGame("VICTORY! (ボス撃破)");
                     return;
                 }
@@ -1142,7 +1176,6 @@ function update() {
         }
     }
 
-    // 雑魚敵の更新と当たり判定
     for (let i = enemies.length - 1; i >= 0; i--) {
         let e = enemies[i];
         e.y += e.speed;
@@ -1183,7 +1216,6 @@ function update() {
                     triggerShake(5, 3);
                     enemies.splice(i, 1);
 
-                    // 敵撃破カウント加算
                     defeatedEnemyCount++;
                     if (defeatedEnemyCount >= BOSS_SPAWN_THRESHOLD && boss === null) {
                         spawnBoss();
@@ -1239,6 +1271,14 @@ function draw() {
         ctx.fill();
     }
 
+    for (let eb of enemyBullets) {
+        ctx.fillStyle = eb.color;
+        ctx.shadowColor = eb.color;
+        ctx.beginPath();
+        ctx.arc(eb.x, eb.y, eb.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
     for (let e of enemies) {
         ctx.fillStyle = e.color;
         ctx.shadowColor = e.color;
@@ -1247,14 +1287,12 @@ function draw() {
         ctx.fill();
     }
 
-    // ボスの描画
     if (boss !== null) {
         ctx.fillStyle = boss.color;
         ctx.shadowColor = boss.color;
         ctx.beginPath();
         ctx.arc(boss.x, boss.y, boss.radius, 0, Math.PI * 2);
         ctx.fill();
-        // ボスのコア意匠
         ctx.fillStyle = '#ffffff';
         ctx.beginPath();
         ctx.arc(boss.x, boss.y, boss.radius / 3, 0, Math.PI * 2);
