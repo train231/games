@@ -385,37 +385,37 @@
             padding: 14px;
             margin-bottom: 8px;
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
-            min-height: 140px;
+            min-height: 145px;
             justify-content: center;
         }
         .tutorial-slide.active {
             display: flex;
         }
         .slide-icon {
-            font-size: 30px;
+            font-size: 28px;
             margin-bottom: 4px;
             text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
         }
         .slide-title {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: #00f3ff;
             margin-bottom: 4px;
             letter-spacing: 1px;
         }
         .slide-desc {
-            font-size: 11px;
+            font-size: 10.5px;
             color: #b0b0c0;
             line-height: 1.4;
         }
         .slide-dots {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             margin-bottom: 8px;
         }
         .dot {
-            width: 7px;
-            height: 7px;
+            width: 6px;
+            height: 6px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             transition: 0.3s;
@@ -423,7 +423,7 @@
         .dot.active {
             background: #00f3ff;
             box-shadow: 0 0 8px #00f3ff;
-            width: 16px;
+            width: 14px;
             border-radius: 4px;
         }
         .slide-nav {
@@ -620,30 +620,39 @@
         <div class="subtitle">ゲームの遊び方</div>
 
         <div class="tutorial-slide active" id="slide-0">
-            <div class="slide-icon">🚀</div>
-            <div class="slide-title">1. 自機の移動操作</div>
+            <div class="slide-icon">💻</div>
+            <div class="slide-title">1. PCでの操作方法</div>
             <div class="slide-desc">
-                画面のどこを触っても（またはマウスを動かしても）、**その場所へ自機がスムーズに追従**します。<br>
-                移動のためのスライドパッドはありません。避けることに専念できます！
+                ・**移動**：マウスを動かすと、その位置へ自機がスムーズに追従します。<br>
+                ・**攻撃**：画面下の「FIRE」ボタンをクリック／長押しで連射。または「LOCK」ボタンで自動連射に切替！<br>
+                ・**ポーズ**：キーボードの「P」キーで一時停止可能です。
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-1">
-            <div class="slide-icon">🎯</div>
-            <div class="slide-title">2. 発射とロックボタン</div>
+            <div class="slide-icon">📱</div>
+            <div class="slide-title">2. モバイルでの操作方法</div>
             <div class="slide-desc">
-                画面下のボタンで攻撃を切り替え！<br>
-                ・**「FIRE」**：押している間だけ連射<br>
-                ・**「LOCK」**：一度押すと、もう一度押すまで自動連射し続ける（弾の無駄撃ちを完全防止！）
+                ・**移動**：画面を指でタッチしてスライドさせると、位置に自機が追従します（パッド不要）。<br>
+                ・**攻撃**：画面下の**「FIRE」**（押している間だけ連射）または**「LOCK」**（自動連射のON/OFF切替）ボタンを使用します。
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-2">
-            <div class="slide-icon">⚡</div>
-            <div class="slide-title">3. エネルギー管理と報酬</div>
+            <div class="slide-icon">🎯</div>
+            <div class="slide-title">3. 発射とロック機能のコツ</div>
             <div class="slide-desc">
-                連射するとエネルギー（上部ゲージ）が減ります。<br>
-                ピンチの時は敵から出やすい青い球を拾って全回復！雑魚を倒してボスを撃破し、コインを稼いでショップで自機を強化しよう。
+                ・**LOCKボタン**は一度押すと、もう一度押すまで自動連射し続けます。<br>
+                ・弾の無駄撃ちや指の疲れを防ぎ、敵の回避に集中できる便利な機能です！
+            </div>
+        </div>
+
+        <div class="tutorial-slide" id="slide-3">
+            <div class="slide-icon">⚡</div>
+            <div class="slide-title">4. エネルギー管理とショップ</div>
+            <div class="slide-desc">
+                ・連射すると上部のエネルギーが減少します。敵が落とす青い球を拾って全回復！<br>
+                ・敵を倒してコインを稼ぎ、メニューの「ショップ」で自機を強化してステージをクリアしよう！
             </div>
         </div>
 
@@ -651,6 +660,7 @@
             <div class="dot active" id="dot-0"></div>
             <div class="dot" id="dot-1"></div>
             <div class="dot" id="dot-2"></div>
+            <div class="dot" id="dot-3"></div>
         </div>
 
         <div class="slide-nav">
@@ -708,7 +718,7 @@ btnLock.addEventListener('click', (e) => {
 });
 
 let currentSlide = 0;
-const totalSlides = 3;
+const totalSlides = 4;
 
 function openTutorial() {
     currentSlide = 0;
