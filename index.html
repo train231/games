@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Shooting game+ -Desktop and Mobile edition</title>
+    <title>NEON STRIKER - KEYBOARD EDITION</title>
     <style>
         * {
             box-sizing: border-box;
@@ -53,7 +53,7 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 12px;
+            padding: 10px;
             z-index: 10;
         }
         .hud-top {
@@ -61,7 +61,7 @@
             flex-direction: column;
             gap: 4px;
             background: rgba(10, 10, 20, 0.85);
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
             border: 1px solid rgba(0, 243, 255, 0.3);
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
@@ -142,7 +142,7 @@
         /* ボスHPゲージ */
         #boss-hud {
             position: absolute;
-            top: 55px;
+            top: 50px;
             left: 16px;
             right: 16px;
             display: none;
@@ -188,7 +188,7 @@
             justify-content: flex-start;
             align-items: center;
             z-index: 100;
-            padding: 12px 10px;
+            padding: 10px 10px;
             transition: opacity 0.3s ease;
             overflow-y: auto;
             pointer-events: auto;
@@ -198,7 +198,7 @@
             pointer-events: none;
         }
         h1 {
-            font-size: 24px;
+            font-size: 22px;
             margin-top: 2px;
             margin-bottom: 2px;
             background: linear-gradient(45deg, #00f3ff, #ff007f);
@@ -210,8 +210,8 @@
         }
         .subtitle {
             color: #8080a0;
-            margin-bottom: 6px;
-            font-size: 10px;
+            margin-bottom: 4px;
+            font-size: 9.5px;
             letter-spacing: 1px;
             text-transform: uppercase;
             text-align: center;
@@ -220,16 +220,16 @@
             background: rgba(20, 20, 40, 0.6);
             border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: 8px;
-            padding: 6px 10px;
+            padding: 5px 8px;
             width: 100%;
             max-width: 400px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
         .menu-title {
-            font-size: 10px;
+            font-size: 9.5px;
             color: #00f3ff;
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             letter-spacing: 1px;
             text-transform: uppercase;
             border-bottom: 1px solid rgba(0, 243, 255, 0.2);
@@ -237,7 +237,7 @@
         }
         .btn-group {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             width: 100%;
         }
         .btn {
@@ -245,10 +245,10 @@
             background: linear-gradient(45deg, #1f1f3a, #2a2a5a);
             border: 1px solid #00f3ff;
             color: #fff;
-            padding: 5px;
-            font-size: 11px;
+            padding: 4px;
+            font-size: 10px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
@@ -269,14 +269,14 @@
             background: linear-gradient(45deg, #00f3ff, #ff007f);
             border: none;
             color: white;
-            padding: 9px;
-            font-size: 12px;
+            padding: 8px;
+            font-size: 11px;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 7px;
             cursor: pointer;
             box-shadow: 0 0 20px rgba(255, 0, 127, 0.4);
             transition: all 0.2s ease;
-            margin-top: 3px;
+            margin-top: 2px;
             letter-spacing: 1px;
         }
         .btn-action:hover {
@@ -287,7 +287,7 @@
             background: rgba(255, 255, 255, 0.08);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #b0b0c0;
-            margin-top: 3px;
+            margin-top: 2px;
         }
         .btn-sub:hover {
             background: rgba(255, 255, 255, 0.2);
@@ -309,18 +309,18 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(10, 10, 20, 0.8);
-            padding: 4px 8px;
-            border-radius: 6px;
-            margin-bottom: 3px;
+            padding: 3px 6px;
+            border-radius: 5px;
+            margin-bottom: 2px;
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .shop-info div:first-child {
-            font-size: 10px;
+            font-size: 9.5px;
             font-weight: bold;
             color: #fff;
         }
         .shop-info div:last-child {
-            font-size: 9px;
+            font-size: 8.5px;
             color: #ffd700;
         }
         .btn-buy {
@@ -328,7 +328,7 @@
             border: 1px solid #ffd700;
             color: #ffd700;
             padding: 3px 6px;
-            font-size: 9px;
+            font-size: 8.5px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
@@ -348,8 +348,54 @@
 
         .backup-group {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             margin-top: 2px;
+        }
+
+        /* ログインボーナスカレンダーのスタイル */
+        .login-calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 3px;
+            margin-top: 2px;
+        }
+        .calendar-day {
+            background: rgba(10, 10, 25, 0.9);
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            border-radius: 4px;
+            padding: 3px 1px;
+            text-align: center;
+            font-size: 8.5px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .calendar-day .day-num {
+            color: #8080a0;
+            font-size: 7.5px;
+        }
+        .calendar-day .day-reward {
+            color: #ffd700;
+            font-weight: bold;
+            font-size: 8.5px;
+        }
+        .calendar-day.claimed {
+            background: rgba(0, 243, 255, 0.15);
+            border-color: #00f3ff;
+            opacity: 0.6;
+        }
+        .calendar-day.claimed .day-reward::after {
+            content: " ✓";
+            color: #00f3ff;
+        }
+        .calendar-day.today {
+            border-color: #ffd700;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+            background: rgba(255, 215, 0, 0.1);
+        }
+        .calendar-day.today .day-num {
+            color: #ffd700;
+            font-weight: bold;
         }
 
         /* ランキング表示部分のスタイル */
@@ -361,9 +407,9 @@
         .ranking-row {
             display: flex;
             justify-content: space-between;
-            font-size: 10px;
+            font-size: 9.5px;
             background: rgba(0, 243, 255, 0.05);
-            padding: 3px 6px;
+            padding: 2px 5px;
             border-radius: 4px;
             border: 1px solid rgba(0, 243, 255, 0.1);
         }
@@ -381,40 +427,40 @@
             background: rgba(20, 20, 40, 0.7);
             border: 1px solid rgba(0, 243, 255, 0.3);
             border-radius: 10px;
-            padding: 12px;
-            margin-bottom: 6px;
+            padding: 10px;
+            margin-bottom: 5px;
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
-            min-height: 135px;
+            min-height: 125px;
             justify-content: center;
         }
         .tutorial-slide.active {
             display: flex;
         }
         .slide-icon {
-            font-size: 24px;
-            margin-bottom: 3px;
+            font-size: 22px;
+            margin-bottom: 2px;
             text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
         }
         .slide-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #00f3ff;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             letter-spacing: 1px;
         }
         .slide-desc {
-            font-size: 10px;
+            font-size: 9.5px;
             color: #b0b0c0;
             line-height: 1.3;
         }
         .slide-dots {
             display: flex;
             gap: 5px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
         }
         .dot {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             transition: 0.3s;
@@ -422,12 +468,12 @@
         .dot.active {
             background: #00f3ff;
             box-shadow: 0 0 8px #00f3ff;
-            width: 14px;
+            width: 12px;
             border-radius: 4px;
         }
         .slide-nav {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             width: 100%;
             max-width: 400px;
         }
@@ -445,21 +491,21 @@
             text-align: center;
         }
         .result-label {
-            font-size: 11px;
+            font-size: 10px;
             color: #8080a0;
             letter-spacing: 2px;
-            margin-top: 8px;
+            margin-top: 6px;
             text-transform: uppercase;
         }
         .result-value-score {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 900;
             color: #00f3ff;
             text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
             letter-spacing: 2px;
         }
         .result-value-coin {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 900;
             color: #ffd700;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
@@ -509,8 +555,8 @@
 
     <!-- スタート画面 -->
     <div id="main-overlay" class="overlay">
-        <h1 id="menu-main-title">Shooting Game+</h1>
-        <div class="subtitle" id="menu-subtitle">Web Edition (Desktop/Mobile Supported)</div>
+        <h1 id="menu-main-title">NEON STRIKER</h1>
+        <div class="subtitle" id="menu-subtitle">Keyboard Edition</div>
 
         <div id="start-menu-content" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
             <div class="menu-box">
@@ -540,16 +586,22 @@
                 </div>
             </div>
 
+            <!-- ログインボーナスカレンダー -->
+            <div class="menu-box">
+                <div class="menu-title">Login Bonus (ログインボーナス)</div>
+                <div id="login-calendar" class="login-calendar-grid">
+                    <!-- カレンダーがここに動的生成されます -->
+                </div>
+            </div>
+
             <div class="menu-box">
                 <div class="menu-title">High Scores (難易度別ランキング)</div>
-                <div class="btn-group" style="margin-bottom: 4px;">
+                <div class="btn-group" style="margin-bottom: 3px;">
                     <button class="btn active" id="rank-tab-1" onclick="switchRankTab(1)">★✰✰</button>
                     <button class="btn" id="rank-tab-2" onclick="switchRankTab(2)">★★✰</button>
                     <button class="btn" id="rank-tab-3" onclick="switchRankTab(3)">★★★</button>
                 </div>
-                <div id="ranking-container" class="ranking-list">
-                    <!-- ランキングがここに動的表示されます -->
-                </div>
+                <div id="ranking-container" class="ranking-list"></div>
             </div>
 
             <div class="menu-box">
@@ -572,7 +624,7 @@
             <div class="result-label">EARNED COINS</div>
             <div class="result-value-coin" id="res-coin">+0C</div>
             
-            <button class="btn-action" onclick="returnToMenu()" style="margin-top: 20px;">メニューに戻る</button>
+            <button class="btn-action" onclick="returnToMenu()" style="margin-top: 15px;">メニューに戻る</button>
         </div>
     </div>
 
@@ -631,11 +683,11 @@
         </div>
 
         <div class="tutorial-slide" id="slide-2">
-            <div class="slide-icon">🎯</div>
-            <div class="slide-title">3. オートセーブとランキング</div>
+            <div class="slide-icon">📅</div>
+            <div class="slide-title">3. ログインボーナス</div>
             <div class="slide-desc">
-                ・コインやアップグレード状況は常に自動セーブされます！<br>
-                ・各難易度ごとのハイスコア上位5件がメニューに記録されます。最高難易度でトップを目指そう！
+                ・毎日ログインするだけで、1日1回ボーナスコインがもらえます！<br>
+                ・7日間でカレンダーが1周し、毎日コツコツ資産を増やせます。
             </div>
         </div>
 
@@ -643,8 +695,7 @@
             <div class="slide-icon">⚡</div>
             <div class="slide-title">4. ショップとボス撃破</div>
             <div class="slide-desc">
-                ・敵を倒してコインを稼ぎ、メニューのショップで自機を強化！<br>
-                ・奥に出現する強力なボスを撃破してステージクリアを目指そう！
+                ・集めたコインで自機をショップ強化し、ランキング上位やボス撃破を目指そう！
             </div>
         </div>
 
@@ -792,20 +843,65 @@ function updateSlideUI() {
     document.getElementById('btn-next').innerText = currentSlide === totalSlides - 1 ? '完了' : '次へ';
 }
 
-// ゲームデータ・セーブ・ランキング管理
+// ゲームデータ・セーブ・ログインボーナス・ランキング管理
 let gameData = {
     coins: 0,
     maxHpLevel: 0,
     rapidLevel: 0,
-    rankings: {
-        1: [], // 難易度1のスコア配列 [{score, date}, ...]
-        2: [], // 難易度2
-        3: []  // 難易度3
-    }
+    lastLoginDate: "",
+    loginDayIndex: 0, // 0〜6 (7日間ループ)
+    rankings: { 1: [], 2: [], 3: [] }
 };
 
 let difficulty = 1;
 let currentRankTab = 1;
+
+// 7日間のログインボーナス報酬額
+const loginRewards = [20, 40, 60, 80, 100, 150, 300];
+
+function checkLoginBonus() {
+    const today = new Date().toDateString(); // "Sun Aug 09 2026"形式
+    if (gameData.lastLoginDate !== today) {
+        // 今日まだ受け取っていない場合
+        const reward = loginRewards[gameData.loginDayIndex];
+        gameData.coins += reward;
+        gameData.lastLoginDate = today;
+        
+        const currentDay = gameData.loginDayIndex + 1;
+        gameData.loginDayIndex = (gameData.loginDayIndex + 1) % 7;
+        saveGameData();
+        
+        setTimeout(() => {
+            alert(`🎁 ログインボーナス！\n${currentDay}日目の報酬として ${reward}コイン を獲得しました！`);
+        }, 300);
+    }
+}
+
+function renderLoginCalendar() {
+    const container = document.getElementById('login-calendar');
+    container.innerHTML = '';
+    
+    for (let i = 0; i < 7; i++) {
+        const dayEl = document.createElement('div');
+        dayEl.className = 'calendar-day';
+        
+        // 判定：すでに受け取り済みのインデックスかどうか
+        // 今日すでに受け取っている場合は loginDayIndex は翌日に進んでいるため、
+        // 簡易的に本日の受取状態を視覚化します
+        if (i < gameData.loginDayIndex || (gameData.lastLoginDate === new Date().toDateString() && i === (gameData.loginDayIndex + 6) % 7)) {
+            dayEl.classList.add('claimed');
+        }
+        if (gameData.lastLoginDate !== new Date().toDateString() && i === gameData.loginDayIndex) {
+            dayEl.classList.add('today');
+        }
+
+        dayEl.innerHTML = `
+            <div class="day-num">${i + 1}日</div>
+            <div class="day-reward">${loginRewards[i]}C</div>
+        `;
+        container.appendChild(dayEl);
+    }
+}
 
 function loadGameData() {
     const saved = localStorage.getItem('neon_striker_keyboard_save');
@@ -815,14 +911,19 @@ function loadGameData() {
             gameData.coins = data.coins || 0;
             gameData.maxHpLevel = data.maxHpLevel || 0;
             gameData.rapidLevel = data.rapidLevel || 0;
+            gameData.lastLoginDate = data.lastLoginDate || "";
+            gameData.loginDayIndex = typeof data.loginDayIndex === 'number' ? data.loginDayIndex : 0;
             if (data.rankings) {
                 gameData.rankings = data.rankings;
             }
         } catch(e) {}
     }
+    
+    checkLoginBonus();
     updateShopUI();
     coinEl.innerText = gameData.coins;
     renderRankings(currentRankTab);
+    renderLoginCalendar();
 }
 
 function saveGameData() {
@@ -842,6 +943,8 @@ function executeResetAnimation() {
             coins: 0,
             maxHpLevel: 0,
             rapidLevel: 0,
+            lastLoginDate: "",
+            loginDayIndex: 0,
             rankings: { 1: [], 2: [], 3: [] }
         };
         loadGameData();
@@ -890,7 +993,7 @@ function renderRankings(diff) {
     const list = gameData.rankings[diff] || [];
     
     if (list.length === 0) {
-        container.innerHTML = '<div style="font-size:9px; color:#8080a0; text-align:center; padding:4px;">記録がありません</div>';
+        container.innerHTML = '<div style="font-size:9px; color:#8080a0; text-align:center; padding:3px;">記録がありません</div>';
         return;
     }
 
@@ -1047,7 +1150,6 @@ function endGame(resultTitle) {
     coinsEarnedThisRun = earnedReward;
     gameData.coins += coinsEarnedThisRun;
 
-    // スコアを難易度別にランキング登録
     registerScore(difficulty, score);
 
     menuMainTitle.innerText = resultTitle;
@@ -1059,6 +1161,7 @@ function endGame(resultTitle) {
     resultMenuContent.style.display = 'flex';
     coinEl.innerText = gameData.coins;
     renderRankings(currentRankTab);
+    renderLoginCalendar();
     overlay.classList.remove('hidden');
 }
 
