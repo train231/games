@@ -26,12 +26,16 @@
         #game-container {
             position: relative;
             width: 480px;
+            max-width: 100vw;
             height: 640px;
+            max-height: 100vh;
             box-shadow: 0 0 50px rgba(0, 243, 255, 0.25);
             border: 2px solid #1f1f3a;
             border-radius: 12px;
             overflow: hidden;
             background: radial-gradient(circle at center, #0f0c29, #1b1736, #0b0914);
+            display: flex;
+            flex-direction: column;
         }
         canvas {
             display: block;
@@ -50,18 +54,18 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 16px;
+            padding: 12px;
             z-index: 10;
         }
         .hud-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 800;
             letter-spacing: 1px;
-            background: rgba(10, 10, 20, 0.75);
-            padding: 10px 14px;
+            background: rgba(10, 10, 20, 0.85);
+            padding: 8px 12px;
             border-radius: 8px;
             border: 1px solid rgba(0, 243, 255, 0.3);
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
@@ -79,10 +83,10 @@
             background: rgba(0, 243, 255, 0.2);
             border: 1px solid #00f3ff;
             color: #00f3ff;
-            padding: 4px 8px;
+            padding: 3px 6px;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: bold;
         }
         .btn-pause-open:hover {
@@ -93,28 +97,28 @@
         /* ボスHPゲージ */
         #boss-hud {
             position: absolute;
-            top: 65px;
-            left: 20px;
-            right: 20px;
+            top: 55px;
+            left: 16px;
+            right: 16px;
             display: none;
             flex-direction: column;
             align-items: center;
             pointer-events: none;
         }
         #boss-name {
-            font-size: 11px;
+            font-size: 10px;
             color: #ff0055;
             letter-spacing: 2px;
             font-weight: bold;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             text-shadow: 0 0 8px rgba(255, 0, 85, 0.6);
         }
         #boss-bar-container {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 0, 85, 0.5);
-            border-radius: 4px;
+            border-radius: 3px;
             overflow: hidden;
         }
         #boss-bar-fill {
@@ -128,10 +132,10 @@
         /* モバイル用バーチャル操作パネル */
         #mobile-controls {
             position: absolute;
-            bottom: 20px;
+            bottom: 16px;
             left: 0;
             width: 100%;
-            padding: 0 20px;
+            padding: 0 16px;
             display: none;
             justify-content: space-between;
             align-items: center;
@@ -139,8 +143,8 @@
             z-index: 20;
         }
         .virtual-pad-area {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             background: rgba(0, 243, 255, 0.05);
             border: 2px dashed rgba(0, 243, 255, 0.3);
             border-radius: 50%;
@@ -152,8 +156,8 @@
             backdrop-filter: blur(2px);
         }
         .virtual-stick {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: rgba(0, 243, 255, 0.3);
             border: 2px solid #00f3ff;
             border-radius: 50%;
@@ -162,14 +166,14 @@
             transition: transform 0.05s linear;
         }
         .virtual-btn-shoot {
-            width: 90px;
-            height: 90px;
+            width: 80px;
+            height: 80px;
             background: rgba(255, 0, 127, 0.2);
             border: 2px solid #ff007f;
             border-radius: 50%;
             color: #fff;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 13px;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -182,21 +186,21 @@
             transform: scale(0.95);
         }
 
-        /* 画面オーバーレイ */
+        /* 画面オーバーレイ（スクロール対応＆上下パディング最適化） */
         .overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(5, 5, 12, 0.95);
+            background: rgba(5, 5, 12, 0.96);
             backdrop-filter: blur(6px);
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: center;
             z-index: 100;
-            padding: 20px;
+            padding: 16px 12px;
             transition: opacity 0.3s ease;
             overflow-y: auto;
             pointer-events: auto;
@@ -206,37 +210,38 @@
             pointer-events: none;
         }
         h1 {
-            font-size: 32px;
+            font-size: 26px;
+            margin-top: 4px;
             margin-bottom: 2px;
             background: linear-gradient(45deg, #00f3ff, #ff007f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 25px rgba(0, 243, 255, 0.4);
+            text-shadow: 0 0 20px rgba(0, 243, 255, 0.4);
             letter-spacing: 2px;
             text-align: center;
         }
         .subtitle {
             color: #8080a0;
-            margin-bottom: 14px;
-            font-size: 12px;
-            letter-spacing: 2px;
+            margin-bottom: 10px;
+            font-size: 11px;
+            letter-spacing: 1px;
             text-transform: uppercase;
             text-align: center;
         }
         .menu-box {
             background: rgba(20, 20, 40, 0.6);
             border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 12px;
-            padding: 12px 16px;
+            border-radius: 10px;
+            padding: 8px 12px;
             width: 100%;
             max-width: 400px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
         .menu-title {
-            font-size: 12px;
+            font-size: 11px;
             color: #00f3ff;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
             letter-spacing: 1px;
             text-transform: uppercase;
             border-bottom: 1px solid rgba(0, 243, 255, 0.2);
@@ -244,7 +249,7 @@
         }
         .btn-group {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
         }
         .btn {
@@ -252,10 +257,10 @@
             background: linear-gradient(45deg, #1f1f3a, #2a2a5a);
             border: 1px solid #00f3ff;
             color: #fff;
-            padding: 8px;
-            font-size: 13px;
+            padding: 6px;
+            font-size: 12px;
             font-weight: bold;
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: center;
@@ -272,11 +277,12 @@
         }
         .btn-action {
             width: 100%;
+            max-width: 400px;
             background: linear-gradient(45deg, #00f3ff, #ff007f);
             border: none;
             color: white;
-            padding: 12px;
-            font-size: 14px;
+            padding: 10px;
+            font-size: 13px;
             font-weight: bold;
             border-radius: 8px;
             cursor: pointer;
@@ -315,28 +321,28 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(10, 10, 20, 0.8);
-            padding: 6px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            margin-bottom: 4px;
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .shop-info div:first-child {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: bold;
             color: #fff;
         }
         .shop-info div:last-child {
-            font-size: 11px;
+            font-size: 10px;
             color: #ffd700;
         }
         .btn-buy {
             background: #2a2a5a;
             border: 1px solid #ffd700;
             color: #ffd700;
-            padding: 5px 10px;
-            font-size: 11px;
+            padding: 4px 8px;
+            font-size: 10px;
             font-weight: bold;
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -354,8 +360,8 @@
 
         .backup-group {
             display: flex;
-            gap: 8px;
-            margin-top: 4px;
+            gap: 6px;
+            margin-top: 2px;
         }
 
         /* チュートリアルスライド */
@@ -368,41 +374,41 @@
             max-width: 400px;
             background: rgba(20, 20, 40, 0.7);
             border: 1px solid rgba(0, 243, 255, 0.3);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 12px;
+            border-radius: 10px;
+            padding: 14px;
+            margin-bottom: 8px;
             box-shadow: 0 0 20px rgba(0, 243, 255, 0.1);
-            min-height: 180px;
+            min-height: 140px;
             justify-content: center;
         }
         .tutorial-slide.active {
             display: flex;
         }
         .slide-icon {
-            font-size: 36px;
-            margin-bottom: 8px;
+            font-size: 30px;
+            margin-bottom: 4px;
             text-shadow: 0 0 12px rgba(0, 243, 255, 0.6);
         }
         .slide-title {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #00f3ff;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             letter-spacing: 1px;
         }
         .slide-desc {
-            font-size: 12px;
+            font-size: 11px;
             color: #b0b0c0;
-            line-height: 1.5;
+            line-height: 1.4;
         }
         .slide-dots {
             display: flex;
             gap: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
         }
         .dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.2);
             transition: 0.3s;
@@ -410,12 +416,12 @@
         .dot.active {
             background: #00f3ff;
             box-shadow: 0 0 8px #00f3ff;
-            width: 20px;
+            width: 16px;
             border-radius: 4px;
         }
         .slide-nav {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             width: 100%;
             max-width: 400px;
         }
@@ -507,7 +513,7 @@
                 <button class="btn btn-sub" onclick="exportSave()">コード出力</button>
                 <button class="btn btn-sub" onclick="importSave()">コード読込</button>
             </div>
-            <button class="btn btn-sub btn-danger" style="width: 100%; margin-top: 6px;" onclick="confirmResetStep1()">データ初期化</button>
+            <button class="btn btn-sub btn-danger" style="width: 100%; margin-top: 4px;" onclick="confirmResetStep1()">データ初期化</button>
         </div>
 
         <button class="btn-action" onclick="startGame()">GAME START</button>
@@ -521,7 +527,7 @@
 
         <div class="menu-box">
             <div class="menu-title">ポーズメニュー</div>
-            <button class="btn-action" onclick="resumeGame()" style="margin-bottom: 8px;">コンティニュー (再開)</button>
+            <button class="btn-action" onclick="resumeGame()" style="margin-bottom: 6px;">コンティニュー (再開)</button>
             <button class="btn-action btn-danger" onclick="giveUpGame()">ギブアップ (終了)</button>
         </div>
 
@@ -890,7 +896,7 @@ function updateStickPosition(touch) {
     let dx = touch.clientX - centerX;
     let dy = touch.clientY - centerY;
     const dist = Math.hypot(dx, dy);
-    const maxRadius = 45;
+    const maxRadius = 35;
 
     if (dist > maxRadius) {
         dx = (dx / dist) * maxRadius;
@@ -982,7 +988,6 @@ function endGame(resultTitle) {
     gameData.coins += coinsEarnedThisRun;
     saveGameData();
 
-    // 結果画面用のタイトルとサブタイトルに更新して表示する
     menuMainTitle.innerText = resultTitle;
     menuSubtitle.innerText = `最終スコア: ${score} / 獲得報酬: +${coinsEarnedThisRun}C`;
     
