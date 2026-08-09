@@ -188,7 +188,7 @@
             justify-content: flex-start;
             align-items: center;
             z-index: 100;
-            padding: 10px 10px;
+            padding: 8px 10px;
             transition: opacity 0.3s ease;
             overflow-y: auto;
             pointer-events: auto;
@@ -198,9 +198,9 @@
             pointer-events: none;
         }
         h1 {
-            font-size: 22px;
-            margin-top: 2px;
-            margin-bottom: 2px;
+            font-size: 20px;
+            margin-top: 1px;
+            margin-bottom: 1px;
             background: linear-gradient(45deg, #00f3ff, #ff007f);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -210,8 +210,8 @@
         }
         .subtitle {
             color: #8080a0;
-            margin-bottom: 4px;
-            font-size: 9.5px;
+            margin-bottom: 3px;
+            font-size: 9px;
             letter-spacing: 1px;
             text-transform: uppercase;
             text-align: center;
@@ -220,24 +220,27 @@
             background: rgba(20, 20, 40, 0.6);
             border: 1px solid rgba(0, 243, 255, 0.2);
             border-radius: 8px;
-            padding: 5px 8px;
+            padding: 4px 8px;
             width: 100%;
             max-width: 400px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
         }
         .menu-title {
-            font-size: 9.5px;
+            font-size: 9px;
             color: #00f3ff;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
             letter-spacing: 1px;
             text-transform: uppercase;
             border-bottom: 1px solid rgba(0, 243, 255, 0.2);
             padding-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .btn-group {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             width: 100%;
         }
         .btn {
@@ -245,8 +248,8 @@
             background: linear-gradient(45deg, #1f1f3a, #2a2a5a);
             border: 1px solid #00f3ff;
             color: #fff;
-            padding: 4px;
-            font-size: 10px;
+            padding: 3px;
+            font-size: 9.5px;
             font-weight: bold;
             border-radius: 5px;
             cursor: pointer;
@@ -269,8 +272,8 @@
             background: linear-gradient(45deg, #00f3ff, #ff007f);
             border: none;
             color: white;
-            padding: 8px;
-            font-size: 11px;
+            padding: 7px;
+            font-size: 10.5px;
             font-weight: bold;
             border-radius: 7px;
             cursor: pointer;
@@ -315,20 +318,20 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .shop-info div:first-child {
-            font-size: 9.5px;
+            font-size: 9px;
             font-weight: bold;
             color: #fff;
         }
         .shop-info div:last-child {
-            font-size: 8.5px;
+            font-size: 8px;
             color: #ffd700;
         }
         .btn-buy {
             background: #2a2a5a;
             border: 1px solid #ffd700;
             color: #ffd700;
-            padding: 3px 6px;
-            font-size: 8.5px;
+            padding: 2px 5px;
+            font-size: 8px;
             font-weight: bold;
             border-radius: 4px;
             cursor: pointer;
@@ -348,52 +351,78 @@
 
         .backup-group {
             display: flex;
-            gap: 5px;
+            gap: 4px;
             margin-top: 2px;
         }
 
-        /* ログインボーナスカレンダーのスタイル */
-        .login-calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 3px;
+        /* 本格月間カレンダー風スタイル（完全にスペースを埋めるデザイン） */
+        .month-calendar-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
             margin-top: 2px;
         }
-        .calendar-day {
-            background: rgba(10, 10, 25, 0.9);
-            border: 1px solid rgba(0, 243, 255, 0.2);
-            border-radius: 4px;
-            padding: 3px 1px;
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
             text-align: center;
-            font-size: 8.5px;
+            font-size: 8px;
+            color: #8080a0;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 3px;
+            padding: 1px 0;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+        .calendar-cell {
+            background: rgba(10, 10, 22, 0.85);
+            border: 1px solid rgba(0, 243, 255, 0.15);
+            border-radius: 4px;
+            padding: 2px 1px;
+            text-align: center;
+            font-size: 8px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            min-height: 28px;
         }
-        .calendar-day .day-num {
-            color: #8080a0;
-            font-size: 7.5px;
+        .calendar-cell .cell-date {
+            color: #707090;
+            font-size: 7px;
         }
-        .calendar-day .day-reward {
+        .calendar-cell .cell-reward {
             color: #ffd700;
             font-weight: bold;
-            font-size: 8.5px;
+            font-size: 8px;
         }
-        .calendar-day.claimed {
-            background: rgba(0, 243, 255, 0.15);
-            border-color: #00f3ff;
-            opacity: 0.6;
+        .calendar-cell.empty {
+            background: rgba(5, 5, 10, 0.3);
+            border-color: rgba(255, 255, 255, 0.03);
+            opacity: 0.3;
         }
-        .calendar-day.claimed .day-reward::after {
-            content: " ✓";
+        .calendar-cell.claimed {
+            background: rgba(0, 243, 255, 0.12);
+            border-color: rgba(0, 243, 255, 0.4);
+        }
+        .calendar-cell.claimed .cell-reward {
             color: #00f3ff;
+            text-shadow: 0 0 5px rgba(0,243,255,0.4);
         }
-        .calendar-day.today {
+        .calendar-cell.claimed .cell-reward::after {
+            content: "✓";
+            font-size: 7px;
+            margin-left: 1px;
+        }
+        .calendar-cell.today {
             border-color: #ffd700;
             box-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
-            background: rgba(255, 215, 0, 0.1);
+            background: rgba(255, 215, 0, 0.12);
         }
-        .calendar-day.today .day-num {
+        .calendar-cell.today .cell-date {
             color: #ffd700;
             font-weight: bold;
         }
@@ -407,9 +436,9 @@
         .ranking-row {
             display: flex;
             justify-content: space-between;
-            font-size: 9.5px;
+            font-size: 9px;
             background: rgba(0, 243, 255, 0.05);
-            padding: 2px 5px;
+            padding: 2px 4px;
             border-radius: 4px;
             border: 1px solid rgba(0, 243, 255, 0.1);
         }
@@ -449,7 +478,7 @@
             letter-spacing: 1px;
         }
         .slide-desc {
-            font-size: 9.5px;
+            font-size: 9px;
             color: #b0b0c0;
             line-height: 1.3;
         }
@@ -491,21 +520,21 @@
             text-align: center;
         }
         .result-label {
-            font-size: 10px;
+            font-size: 9px;
             color: #8080a0;
             letter-spacing: 2px;
             margin-top: 6px;
             text-transform: uppercase;
         }
         .result-value-score {
-            font-size: 32px;
+            font-size: 30px;
             font-weight: 900;
             color: #00f3ff;
             text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
             letter-spacing: 2px;
         }
         .result-value-coin {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 900;
             color: #ffd700;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
@@ -586,17 +615,25 @@
                 </div>
             </div>
 
-            <!-- ログインボーナスカレンダー -->
+            <!-- 本格月間カレンダー風 ログインボーナス -->
             <div class="menu-box">
-                <div class="menu-title">Login Bonus (ログインボーナス)</div>
-                <div id="login-calendar" class="login-calendar-grid">
-                    <!-- カレンダーがここに動的生成されます -->
+                <div class="menu-title">
+                    <span>Monthly Login Calendar</span>
+                    <span id="calendar-month-label" style="color: #ffd700;">--月</span>
+                </div>
+                <div class="month-calendar-wrapper">
+                    <div class="calendar-weekdays">
+                        <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+                    </div>
+                    <div id="month-calendar-grid" class="calendar-grid">
+                        <!-- カレンダーセルがここに動的生成されます -->
+                    </div>
                 </div>
             </div>
 
             <div class="menu-box">
                 <div class="menu-title">High Scores (難易度別ランキング)</div>
-                <div class="btn-group" style="margin-bottom: 3px;">
+                <div class="btn-group" style="margin-bottom: 2px;">
                     <button class="btn active" id="rank-tab-1" onclick="switchRankTab(1)">★✰✰</button>
                     <button class="btn" id="rank-tab-2" onclick="switchRankTab(2)">★★✰</button>
                     <button class="btn" id="rank-tab-3" onclick="switchRankTab(3)">★★★</button>
@@ -610,7 +647,7 @@
                     <button class="btn btn-sub" onclick="exportSave()">コード出力</button>
                     <button class="btn btn-sub" onclick="importSave()">コード読込</button>
                 </div>
-                <button class="btn btn-sub btn-danger" style="width: 100%; margin-top: 3px;" onclick="confirmResetStep1()">データ初期化</button>
+                <button class="btn btn-sub btn-danger" style="width: 100%; margin-top: 2px;" onclick="confirmResetStep1()">データ初期化</button>
             </div>
 
             <button class="btn-action" onclick="startGame()">GAME START</button>
@@ -684,10 +721,10 @@
 
         <div class="tutorial-slide" id="slide-2">
             <div class="slide-icon">📅</div>
-            <div class="slide-title">3. ログインボーナス</div>
+            <div class="slide-title">3. 月間カレンダーボーナス</div>
             <div class="slide-desc">
-                ・毎日ログインするだけで、1日1回ボーナスコインがもらえます！<br>
-                ・7日間でカレンダーが1周し、毎日コツコツ資産を増やせます。
+                ・毎日のログインで自動的にカレンダーのスタンプが押され、ボーナスコインを獲得できます！<br>
+                ・月末まで毎日コツコツ報酬をゲットしよう。
             </div>
         </div>
 
@@ -739,7 +776,6 @@ const controlPanel = document.getElementById('control-panel');
 const btnFire = document.getElementById('btn-fire');
 const btnLock = document.getElementById('btn-lock');
 
-// タッチ端末判定してモバイル用ボタンを表示
 const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 if (isTouchDevice) {
     controlPanel.style.display = 'flex';
@@ -748,7 +784,6 @@ if (isTouchDevice) {
 let isFiring = false;
 let isLockedFiring = false;
 
-// キー入力管理用
 const keys = {
     ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false,
     KeyW: false, KeyS: false, KeyA: false, KeyD: false,
@@ -780,7 +815,6 @@ window.addEventListener('keyup', (e) => {
     }
 });
 
-// モバイル用タッチ操作
 let touchTargetX = null;
 let touchTargetY = null;
 
@@ -843,63 +877,106 @@ function updateSlideUI() {
     document.getElementById('btn-next').innerText = currentSlide === totalSlides - 1 ? '完了' : '次へ';
 }
 
-// ゲームデータ・セーブ・ログインボーナス・ランキング管理
 let gameData = {
     coins: 0,
     maxHpLevel: 0,
     rapidLevel: 0,
-    lastLoginDate: "",
-    loginDayIndex: 0, // 0〜6 (7日間ループ)
+    lastClaimedDate: "", // 最後にログインボーナスを受け取った日付文字列 (例: "2026-8-9")
     rankings: { 1: [], 2: [], 3: [] }
 };
 
 let difficulty = 1;
 let currentRankTab = 1;
 
-// 7日間のログインボーナス報酬額
-const loginRewards = [20, 40, 60, 80, 100, 150, 300];
+// 月間カレンダー用データ生成と報酬受取判定
+function checkMonthlyLoginBonus() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-11
+    const todayDate = now.getDate(); // 1-31
+    const todayKey = `${year}-${month}-${todayDate}`;
 
-function checkLoginBonus() {
-    const today = new Date().toDateString(); // "Sun Aug 09 2026"形式
-    if (gameData.lastLoginDate !== today) {
+    if (gameData.lastClaimedDate !== todayKey) {
         // 今日まだ受け取っていない場合
-        const reward = loginRewards[gameData.loginDayIndex];
+        // 本日の日付に応じたコイン報酬（通常30C、5日ごとに50C、10日ごとに100C、月末は200Cなど）
+        let reward = 30;
+        if (todayDate % 10 === 0) reward = 100;
+        else if (todayDate % 5 === 0) reward = 60;
+        if (todayDate === new Date(year, month + 1, 0).getDate()) reward = 200; // 月末特別報酬
+
         gameData.coins += reward;
-        gameData.lastLoginDate = today;
-        
-        const currentDay = gameData.loginDayIndex + 1;
-        gameData.loginDayIndex = (gameData.loginDayIndex + 1) % 7;
+        gameData.lastClaimedDate = todayKey;
         saveGameData();
-        
+
         setTimeout(() => {
-            alert(`🎁 ログインボーナス！\n${currentDay}日目の報酬として ${reward}コイン を獲得しました！`);
+            alert(`🎁 ログインボーナス！\n${month + 1}月${todayDate}日の報酬として ${reward}コイン を獲得しました！`);
         }, 300);
     }
 }
 
-function renderLoginCalendar() {
-    const container = document.getElementById('login-calendar');
-    container.innerHTML = '';
-    
-    for (let i = 0; i < 7; i++) {
-        const dayEl = document.createElement('div');
-        dayEl.className = 'calendar-day';
+function renderMonthlyCalendar() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth(); // 0-11
+    const todayDate = now.getDate();
+
+    document.getElementById('calendar-month-label').innerText = `${month + 1}月`;
+
+    const firstDayIndex = new Date(year, month, 1).getDay(); // 0 (日曜) 〜 6 (土曜)
+    const totalDays = new Date(year, month + 1, 0).getDate(); // その月の日数
+
+    const gridContainer = document.getElementById('month-calendar-grid');
+    gridContainer.innerHTML = '';
+
+    // 月初めの空白セル埋め
+    for (let i = 0; i < firstDayIndex; i++) {
+        const emptyCell = document.createElement('div');
+        emptyCell.className = 'calendar-cell empty';
+        gridContainer.appendChild(emptyCell);
+    }
+
+    // 各日付のセル生成
+    for (let d = 1; d <= totalDays; d++) {
+        const cell = document.createElement('div');
+        cell.className = 'calendar-cell';
+
+        const dateKey = `${year}-${month}-${d}`;
         
-        // 判定：すでに受け取り済みのインデックスかどうか
-        // 今日すでに受け取っている場合は loginDayIndex は翌日に進んでいるため、
-        // 簡易的に本日の受取状態を視覚化します
-        if (i < gameData.loginDayIndex || (gameData.lastLoginDate === new Date().toDateString() && i === (gameData.loginDayIndex + 6) % 7)) {
-            dayEl.classList.add('claimed');
-        }
-        if (gameData.lastLoginDate !== new Date().toDateString() && i === gameData.loginDayIndex) {
-            dayEl.classList.add('today');
+        // 過去の日付ですでに受け取り済みかどうかの簡易判定
+        // lastClaimedDateがこの日以降、または今日以前ならチェック済みにする
+        const isToday = (d === todayDate);
+        const isPast = (d < todayDate);
+        
+        // 本日すでに受け取ったか
+        const todayKey = `${year}-${month}-${todayDate}`;
+        const alreadyClaimedToday = (gameData.lastClaimedDate === todayKey && isToday);
+        
+        if (isPast || alreadyClaimedToday && isToday) {
+            // 過去の日付または今日の受取済みの場合は受取済みとして処理
+            // ただし、もし未来の日付なら未受取
         }
 
-        dayEl.innerHTML = `
-            <div class="day-num">${i + 1}日</div>
-            <div class="day-reward">${loginRewards[i]}C</div>
+        // 簡易的に「今日以前」はすべてチェック済み、またはユーザーデータで管理
+        // ここでは「今日より前の日付」はすべて受取済み、本日は今日の状態に合わせる
+        if (d < todayDate) {
+            cell.classList.add('claimed');
+        } else if (isToday) {
+            cell.classList.add('today');
+            if (gameData.lastClaimedDate === todayKey) {
+                cell.classList.add('claimed');
+            }
+        }
+
+        let reward = 30;
+        if (d % 10 === 0) reward = 100;
+        else if (d % 5 === 0) reward = 60;
+        if (d === totalDays) reward = 200;
+
+        cell.innerHTML = `
+            <div class="cell-date">${d}</div>
+            <div class="cell-reward">${reward}C</div>
         `;
-        container.appendChild(dayEl);
+        gridContainer.appendChild(cell);
     }
 }
 
@@ -911,19 +988,18 @@ function loadGameData() {
             gameData.coins = data.coins || 0;
             gameData.maxHpLevel = data.maxHpLevel || 0;
             gameData.rapidLevel = data.rapidLevel || 0;
-            gameData.lastLoginDate = data.lastLoginDate || "";
-            gameData.loginDayIndex = typeof data.loginDayIndex === 'number' ? data.loginDayIndex : 0;
+            gameData.lastClaimedDate = data.lastClaimedDate || "";
             if (data.rankings) {
                 gameData.rankings = data.rankings;
             }
         } catch(e) {}
     }
     
-    checkLoginBonus();
+    checkMonthlyLoginBonus();
     updateShopUI();
     coinEl.innerText = gameData.coins;
     renderRankings(currentRankTab);
-    renderLoginCalendar();
+    renderMonthlyCalendar();
 }
 
 function saveGameData() {
@@ -943,8 +1019,7 @@ function executeResetAnimation() {
             coins: 0,
             maxHpLevel: 0,
             rapidLevel: 0,
-            lastLoginDate: "",
-            loginDayIndex: 0,
+            lastClaimedDate: "",
             rankings: { 1: [], 2: [], 3: [] }
         };
         loadGameData();
@@ -993,7 +1068,7 @@ function renderRankings(diff) {
     const list = gameData.rankings[diff] || [];
     
     if (list.length === 0) {
-        container.innerHTML = '<div style="font-size:9px; color:#8080a0; text-align:center; padding:3px;">記録がありません</div>';
+        container.innerHTML = '<div style="font-size:8.5px; color:#8080a0; text-align:center; padding:2px;">記録がありません</div>';
         return;
     }
 
@@ -1161,7 +1236,7 @@ function endGame(resultTitle) {
     resultMenuContent.style.display = 'flex';
     coinEl.innerText = gameData.coins;
     renderRankings(currentRankTab);
-    renderLoginCalendar();
+    renderMonthlyCalendar();
     overlay.classList.remove('hidden');
 }
 
