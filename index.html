@@ -99,6 +99,47 @@
             color: #05050a;
         }
 
+        /* モバイル用アクションコントロールエリア */
+        #control-panel {
+            position: absolute;
+            bottom: 12px;
+            left: 12px;
+            right: 12px;
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+            z-index: 20;
+        }
+        .control-btn {
+            flex: 1;
+            background: rgba(0, 243, 255, 0.15);
+            border: 2px solid #00f3ff;
+            color: #00f3ff;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+            transition: background 0.1s, box-shadow 0.1s;
+        }
+        .control-btn:active, .control-btn.active {
+            background: #00f3ff;
+            color: #05050a;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.8);
+        }
+        #btn-lock {
+            border-color: #ff007f;
+            color: #ff007f;
+            background: rgba(255, 0, 127, 0.15);
+        }
+        #btn-lock:active, #btn-lock.active {
+            background: #ff007f;
+            color: #fff;
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.8);
+        }
+
         /* 残弾ゲージ */
         .ammo-bar-container {
             width: 100%;
@@ -468,6 +509,12 @@
                 <div id="boss-bar-fill"></div>
             </div>
         </div>
+
+        <!-- 下部コントローラー（発射ボタン ＆ 発射ロックボタン） -->
+        <div id="control-panel">
+            <button class="control-btn" id="btn-fire">FIRE (押して連射)</button>
+            <button class="control-btn" id="btn-lock">LOCK (自動連射切替)</button>
+        </div>
     </div>
 
     <!-- スタート画面（兼結果・ゲームオーバー画面） -->
@@ -574,29 +621,29 @@
 
         <div class="tutorial-slide active" id="slide-0">
             <div class="slide-icon">🚀</div>
-            <div class="slide-title">1. 操作方法</div>
+            <div class="slide-title">1. 自機の移動操作</div>
             <div class="slide-desc">
-                画面のどこをスライドしても自機が追従します。<br>
-                スライド（長押し）している間、自動でビームが連射されます！
+                画面のどこを触っても（またはマウスを動かしても）、**その場所へ自機がスムーズに追従**します。<br>
+                移動のためのスライドパッドはありません。避けることに専念できます！
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-1">
-            <div class="slide-icon">⚡</div>
-            <div class="slide-title">2. エネルギーと補充</div>
+            <div class="slide-icon">🎯</div>
+            <div class="slide-title">2. 発射とロックボタン</div>
             <div class="slide-desc">
-                連射すると上部のエネルギーが減少します。<br>
-                難易度が低いほどタンクは小さく、高いほど大容量です。<br>
-                敵が落とす「青い球アイテム」を拾うと全回復！
+                画面下のボタンで攻撃を切り替え！<br>
+                ・**「FIRE」**：押している間だけ連射<br>
+                ・**「LOCK」**：一度押すと、もう一度押すまで自動連射し続ける（弾の無駄撃ちを完全防止！）
             </div>
         </div>
 
         <div class="tutorial-slide" id="slide-2">
-            <div class="slide-icon">👑</div>
-            <div class="slide-title">3. ボス戦と強化</div>
+            <div class="slide-icon">⚡</div>
+            <div class="slide-title">3. エネルギー管理と報酬</div>
             <div class="slide-desc">
-                雑魚を倒していくとボスが出現！<br>
-                コインを稼いでショップで自機を強化しよう。
+                連射するとエネルギー（上部ゲージ）が減ります。<br>
+                ピンチの時は敵から出やすい青い球を拾って全回復！雑魚を倒してボスを撃破し、コインを稼いでショップで自機を強化しよう。
             </div>
         </div>
 
@@ -636,6 +683,29 @@ const pauseOverlay = document.getElementById('pause-overlay');
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 const bossHud = document.getElementById('boss-hud');
 const bossBarFill = document.getElementById('boss-bar-fill');
+
+const btnFire = document.getElementById('btn-fire');
+const btnLock = document.getElementById('btn-lock');
+
+let isFiring = false;
+let isLockedFiring = false;
+
+// FIREボタンのイベント
+btnFire.addEventListener('mousedown', () => { if (!isPaused) isFiring = true; btnFire.classList.add('active'); });
+btnFire.addEventListener('mouseup', () => { isFiring = false; btnFire.classList.remove('active'); });
+btnFire.addEventListener('mouseleave', () => { isFiring = false; btnFire.classList.remove('active'); });
+
+btnFire.addEventListener('touchstart', (e) => { e.preventDefault(); if (!isPaused) isFiring = true; btnFire.classList.add('active'); });
+btnFire.addEventListener('touchend', (e) => { e.preventDefault(); isFiring = false; btnFire.classList.remove('active'); });
+btnFire.addEventListener('touchcancel', (e) => { e.preventDefault(); isFiring = false; btnFire.classList.remove('active'); });
+
+// LOCKボタンのイベント（押してもう一度押すまで切り替え）
+btnLock.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (isPaused) return;
+    isLockedFiring = !isLockedFiring;
+    btnLock.classList.toggle('active', isLockedFiring);
+});
 
 let currentSlide = 0;
 const totalSlides = 3;
@@ -827,7 +897,6 @@ let ammo = 100;
 
 let mouseX = canvas.width / 2;
 let mouseY = canvas.height - 100;
-let isTouchingOrClicking = false;
 
 let screenShakeTimer = 0;
 let screenShakeIntensity = 0;
@@ -863,31 +932,15 @@ function updatePointerPosition(clientX, clientY) {
 window.addEventListener('mousemove', (e) => {
     updatePointerPosition(e.clientX, e.clientY);
 });
-window.addEventListener('mousedown', (e) => {
-    if (isPaused) return;
-    isTouchingOrClicking = true;
-    updatePointerPosition(e.clientX, e.clientY);
-});
-window.addEventListener('mouseup', () => {
-    isTouchingOrClicking = false;
-});
-
-window.addEventListener('touchstart', (e) => {
-    if (isPaused) return;
-    isTouchingOrClicking = true;
-    const touch = e.changedTouches[0];
-    updatePointerPosition(touch.clientX, touch.clientY);
-});
 window.addEventListener('touchmove', (e) => {
     if (isPaused) return;
     const touch = e.changedTouches[0];
     updatePointerPosition(touch.clientX, touch.clientY);
 });
-window.addEventListener('touchend', () => {
-    isTouchingOrClicking = false;
-});
-window.addEventListener('touchcancel', () => {
-    isTouchingOrClicking = false;
+window.addEventListener('touchstart', (e) => {
+    if (isPaused) return;
+    const touch = e.changedTouches[0];
+    updatePointerPosition(touch.clientX, touch.clientY);
 });
 
 window.addEventListener('keydown', (e) => { 
@@ -900,7 +953,7 @@ window.addEventListener('keydown', (e) => {
 function openPauseMenu() {
     if (!gameRunning) return;
     isPaused = true;
-    isTouchingOrClicking = false;
+    isFiring = false;
     pauseOverlay.classList.remove('hidden');
 }
 
@@ -911,6 +964,8 @@ function resumeGame() {
 
 function giveUpGame() {
     isPaused = false;
+    isLockedFiring = false;
+    btnLock.classList.remove('active');
     pauseOverlay.classList.add('hidden');
     endGame("GIVE UP");
 }
@@ -938,6 +993,8 @@ function startGame() {
     items = [];
     boss = null;
     particles = [];
+    isLockedFiring = false;
+    btnLock.classList.remove('active');
     bossHud.style.display = 'none';
 
     scoreEl.innerText = score;
@@ -964,7 +1021,9 @@ function startGame() {
 
 function endGame(resultTitle) {
     gameRunning = false;
-    isTouchingOrClicking = false;
+    isFiring = false;
+    isLockedFiring = false;
+    btnLock.classList.remove('active');
     bossHud.style.display = 'none';
     
     const earnedReward = Math.floor((score / 300) * (0.3 + difficulty * 0.15));
@@ -1069,7 +1128,7 @@ function update() {
     const baseCooldown = Math.max(2, 6 - gameData.rapidLevel);
     player.shootCooldown--;
 
-    if (isTouchingOrClicking && player.shootCooldown <= 0 && ammo > 0) {
+    if ((isFiring || isLockedFiring) && player.shootCooldown <= 0 && ammo > 0) {
         bullets.push({
             x: player.x,
             y: player.y - player.radius,
@@ -1187,7 +1246,7 @@ function update() {
                 bossBarFill.style.width = hpPercent + '%';
 
                 if (boss.hp <= 0) {
-                    createParticles(boss.x, boss.y, '#00f3ff', 40);
+                    createParticles(boss.x, boss.y, '#ff00ff', 40);
                     score += 2000 * difficulty;
                     scoreEl.innerText = score;
                     triggerShake(25, 12);
@@ -1240,7 +1299,6 @@ function update() {
                     scoreEl.innerText = score;
                     triggerShake(5, 3);
 
-                    // タンク切れの救済措置：残りエネルギーが20%未満ならドロップ率を50%に引き上げ、通常時は12%
                     let dropRate = (ammo / maxAmmo < 0.2) ? 0.50 : 0.12;
                     if (Math.random() < dropRate) {
                         items.push({
