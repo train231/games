@@ -1180,14 +1180,14 @@ function update() {
             const dist = Math.hypot(b.x - boss.x, b.y - boss.y);
             if (dist < b.radius + boss.radius) {
                 boss.hp--;
-                createParticles(b.x, b.y, '#ff00f3', 5);
+                createParticles(b.x, b.y, '#00f3ff', 5);
                 bullets.splice(j, 1);
 
                 let hpPercent = Math.max(0, (boss.hp / boss.maxHp) * 100);
                 bossBarFill.style.width = hpPercent + '%';
 
                 if (boss.hp <= 0) {
-                    createParticles(boss.x, boss.y, '#ff00ff', 40);
+                    createParticles(boss.x, boss.y, '#00f3ff', 40);
                     score += 2000 * difficulty;
                     scoreEl.innerText = score;
                     triggerShake(25, 12);
@@ -1240,8 +1240,9 @@ function update() {
                     scoreEl.innerText = score;
                     triggerShake(5, 3);
 
-                    // 補充アイテムのドロップ率を適度な確率（18%）に調整
-                    if (Math.random() < 0.18) {
+                    // タンク切れの救済措置：残りエネルギーが20%未満ならドロップ率を50%に引き上げ、通常時は12%
+                    let dropRate = (ammo / maxAmmo < 0.2) ? 0.50 : 0.12;
+                    if (Math.random() < dropRate) {
                         items.push({
                             x: e.x,
                             y: e.y,
