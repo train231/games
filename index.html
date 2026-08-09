@@ -186,7 +186,7 @@
             transform: scale(0.95);
         }
 
-        /* 画面オーバーレイ（スクロール対応＆上下パディング最適化） */
+        /* 画面オーバーレイ共通 */
         .overlay {
             position: absolute;
             top: 0;
@@ -426,6 +426,40 @@
             max-width: 400px;
         }
 
+        /* リザルト画面専用のシンプルデザイン */
+        .result-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            max-width: 400px;
+            margin: auto 0;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 12px;
+            color: #8080a0;
+            letter-spacing: 2px;
+            margin-top: 12px;
+            text-transform: uppercase;
+        }
+        .result-value-score {
+            font-size: 42px;
+            font-weight: 900;
+            color: #00f3ff;
+            text-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+            letter-spacing: 2px;
+        }
+        .result-value-coin {
+            font-size: 32px;
+            font-weight: 900;
+            color: #ffd700;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            letter-spacing: 2px;
+        }
+
         @keyframes wipeOut {
             0% { transform: scale(1); opacity: 1; filter: hue-rotate(0deg); }
             50% { transform: scale(1.05); opacity: 0.8; filter: hue-rotate(90deg) brightness(2); }
@@ -467,57 +501,71 @@
         </div>
     </div>
 
-    <!-- スタート画面（兼結果画面） -->
+    <!-- スタート画面（兼結果・ゲームオーバー画面） -->
     <div id="main-overlay" class="overlay">
         <h1 id="menu-main-title">NEON STRIKER</h1>
         <div class="subtitle" id="menu-subtitle">Ultimate Edition</div>
 
-        <div class="menu-box">
-            <div class="menu-title">Game Mode</div>
-            <div class="btn-group">
-                <button class="btn active" id="mode-new" onclick="setMode('new')">最初から</button>
-                <button class="btn" id="mode-continue" onclick="setMode('continue')">続きから</button>
-            </div>
-        </div>
-
-        <div class="menu-box">
-            <div class="menu-title">Difficulty (難易度)</div>
-            <div class="btn-group">
-                <button class="btn active" id="diff-1" onclick="setDifficulty(1)">★✰✰</button>
-                <button class="btn" id="diff-2" onclick="setDifficulty(2)">★★✰</button>
-                <button class="btn" id="diff-3" onclick="setDifficulty(3)">★★★</button>
-            </div>
-        </div>
-
-        <div class="menu-box">
-            <div class="menu-title">Item Shop (次回以降に効果適用)</div>
-            <div class="shop-item">
-                <div class="shop-info">
-                    <div>HP増強 (Max HP +50)</div>
-                    <div id="item-hp-cost">COST: 50C</div>
+        <!-- 通常のスタートメニューコンテンツ -->
+        <div id="start-menu-content" style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+            <div class="menu-box">
+                <div class="menu-title">Game Mode</div>
+                <div class="btn-group">
+                    <button class="btn active" id="mode-new" onclick="setMode('new')">最初から</button>
+                    <button class="btn" id="mode-continue" onclick="setMode('continue')">続きから</button>
                 </div>
-                <button class="btn-buy" id="buy-hp" onclick="buyItem('hp')">購入</button>
             </div>
-            <div class="shop-item">
-                <div class="shop-info">
-                    <div>連射速度向上 (Rapid Fire)</div>
-                    <div id="item-rapid-cost">COST: 100C</div>
+
+            <div class="menu-box">
+                <div class="menu-title">Difficulty (難易度)</div>
+                <div class="btn-group">
+                    <button class="btn active" id="diff-1" onclick="setDifficulty(1)">★✰✰</button>
+                    <button class="btn" id="diff-2" onclick="setDifficulty(2)">★★✰</button>
+                    <button class="btn" id="diff-3" onclick="setDifficulty(3)">★★★</button>
                 </div>
-                <button class="btn-buy" id="buy-rapid" onclick="buyItem('rapid')">購入</button>
             </div>
+
+            <div class="menu-box">
+                <div class="menu-title">Item Shop (次回以降に効果適用)</div>
+                <div class="shop-item">
+                    <div class="shop-info">
+                        <div>HP増強 (Max HP +50)</div>
+                        <div id="item-hp-cost">COST: 50C</div>
+                    </div>
+                    <button class="btn-buy" id="buy-hp" onclick="buyItem('hp')">購入</button>
+                </div>
+                <div class="shop-item">
+                    <div class="shop-info">
+                        <div>連射速度向上 (Rapid Fire)</div>
+                        <div id="item-rapid-cost">COST: 100C</div>
+                    </div>
+                    <button class="btn-buy" id="buy-rapid" onclick="buyItem('rapid')">購入</button>
+                </div>
+            </div>
+
+            <div class="menu-box">
+                <div class="menu-title">Save Backup & Reset</div>
+                <div class="backup-group">
+                    <button class="btn btn-sub" onclick="exportSave()">コード出力</button>
+                    <button class="btn btn-sub" onclick="importSave()">コード読込</button>
+                </div>
+                <button class="btn btn-sub btn-danger" style="width: 100%; margin-top: 4px;" onclick="confirmResetStep1()">データ初期化</button>
+            </div>
+
+            <button class="btn-action" onclick="startGame()">GAME START</button>
+            <button class="btn btn-action btn-sub" onclick="openTutorial()">遊び方を見る</button>
         </div>
 
-        <div class="menu-box">
-            <div class="menu-title">Save Backup & Reset</div>
-            <div class="backup-group">
-                <button class="btn btn-sub" onclick="exportSave()">コード出力</button>
-                <button class="btn btn-sub" onclick="importSave()">コード読込</button>
-            </div>
-            <button class="btn btn-sub btn-danger" style="width: 100%; margin-top: 4px;" onclick="confirmResetStep1()">データ初期化</button>
+        <!-- ゲームオーバー・リザルト画面用のシンプル表示 -->
+        <div id="result-menu-content" class="result-panel" style="display: none;">
+            <div class="result-label">SCORE</div>
+            <div class="result-value-score" id="res-score">0</div>
+            
+            <div class="result-label">EARNED COINS</div>
+            <div class="result-value-coin" id="res-coin">+0C</div>
+            
+            <button class="btn-action" onclick="returnToMenu()" style="margin-top: 30px;">メニューに戻る</button>
         </div>
-
-        <button class="btn-action" onclick="startGame()">GAME START</button>
-        <button class="btn btn-action btn-sub" onclick="openTutorial()">遊び方を見る</button>
     </div>
 
     <!-- ポーズ画面 -->
@@ -608,6 +656,11 @@ const hpEl = document.getElementById('hp-val');
 const overlay = document.getElementById('main-overlay');
 const menuMainTitle = document.getElementById('menu-main-title');
 const menuSubtitle = document.getElementById('menu-subtitle');
+const startMenuContent = document.getElementById('start-menu-content');
+const resultMenuContent = document.getElementById('result-menu-content');
+const resScore = document.getElementById('res-score');
+const resCoin = document.getElementById('res-coin');
+
 const pauseOverlay = document.getElementById('pause-overlay');
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 const bossHud = document.getElementById('boss-hud');
@@ -936,7 +989,7 @@ function resumeGame() {
 function giveUpGame() {
     isPaused = false;
     pauseOverlay.classList.add('hidden');
-    endGame("GIVE UP (ギブアップ)");
+    endGame("GIVE UP");
 }
 
 function startGame() {
@@ -988,12 +1041,26 @@ function endGame(resultTitle) {
     gameData.coins += coinsEarnedThisRun;
     saveGameData();
 
+    // 結果画面用に切り替え
     menuMainTitle.innerText = resultTitle;
-    menuSubtitle.innerText = `最終スコア: ${score} / 獲得報酬: +${coinsEarnedThisRun}C`;
+    menuSubtitle.innerText = "";
+    resScore.innerText = score;
+    resCoin.innerText = "+" + coinsEarnedThisRun + "C";
+
+    startMenuContent.style.display = 'none';
+    resultMenuContent.style.display = 'flex';
     
-    updateShopUI();
     coinEl.innerText = gameData.coins;
     overlay.classList.remove('hidden');
+}
+
+function returnToMenu() {
+    // スタート画面の表示に戻す
+    menuMainTitle.innerText = "NEON STRIKER";
+    menuSubtitle.innerText = "Ultimate Edition";
+    startMenuContent.style.display = 'flex';
+    resultMenuContent.style.display = 'none';
+    loadGameData();
 }
 
 function triggerShake(duration, intensity) {
@@ -1176,7 +1243,7 @@ function update() {
                     boss = null;
                     bossHud.style.display = 'none';
 
-                    endGame("VICTORY! (ボス撃破)");
+                    endGame("VICTORY!");
                     return;
                 }
             }
