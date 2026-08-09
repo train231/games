@@ -2,13 +2,15 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NEON STRIKER - ULTIMATE EDITION</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
         }
         body {
             background-color: #030308;
@@ -19,6 +21,7 @@
             align-items: center;
             height: 100vh;
             overflow: hidden;
+            touch-action: none;
         }
         #game-container {
             position: relative;
@@ -63,6 +66,7 @@
             border: 1px solid rgba(0, 243, 255, 0.3);
             box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
             text-shadow: 0 0 8px rgba(0, 243, 255, 0.6);
+            pointer-events: auto;
         }
         .hud-top span {
             color: #00f3ff;
@@ -70,6 +74,63 @@
         .hud-coin {
             color: #ffd700 !important;
             text-shadow: 0 0 8px rgba(255, 215, 0, 0.6) !important;
+        }
+
+        /* モバイル用バーチャル操作パネル（初期非表示） */
+        #mobile-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 0 20px;
+            display: none; /* デフォルトは隠す。jsでモバイル判定時にflexにする */
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            z-index: 20;
+        }
+        .virtual-pad-area {
+            width: 140px;
+            height: 140px;
+            background: rgba(0, 243, 255, 0.05);
+            border: 2px dashed rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            position: relative;
+            backdrop-filter: blur(2px);
+        }
+        .virtual-stick {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 243, 255, 0.3);
+            border: 2px solid #00f3ff;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
+            transition: transform 0.05s linear;
+        }
+        .virtual-btn-shoot {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 0, 127, 0.2);
+            border: 2px solid #ff007f;
+            border-radius: 50%;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: auto;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+            text-shadow: 0 0 5px #ff007f;
+        }
+        .virtual-btn-shoot:active, .virtual-btn-shoot.touching {
+            background: rgba(255, 0, 127, 0.6);
+            transform: scale(0.95);
         }
 
         /* 画面オーバーレイ */
@@ -89,6 +150,7 @@
             padding: 20px;
             transition: opacity 0.3s ease;
             overflow-y: auto;
+            pointer-events: auto;
         }
         .overlay.hidden {
             opacity: 0;
@@ -308,7 +370,7 @@
             max-width: 400px;
         }
 
-        /* リセットアニメーション用スタイル */
+        /* リセットアニメーション */
         @keyframes wipeOut {
             0% { transform: scale(1); opacity: 1; filter: hue-rotate(0deg); }
             50% { transform: scale(1.05); opacity: 0.8; filter: hue-rotate(90deg) brightness(2); }
@@ -330,6 +392,14 @@
             <div>SCORE: <span id="score-val">0</span></div>
             <div>COIN: <span id="coin-val" class="hud-coin">0</span></div>
             <div>HP: <span id="hp-val">100</span></div>
+        </div>
+
+        <!-- モバイル用操作ボタン（スマホ・タブレット検知時のみ表示） -->
+        <div id="mobile-controls">
+            <div class="virtual-pad-area" id="virtual-pad">
+                <div class="virtual-stick" id="virtual-stick"></div>
+            </div>
+            <div class="virtual-btn-shoot" id="virtual-shoot-btn">SHOOT</div>
         </div>
     </div>
 
@@ -394,10 +464,9 @@
         <div class="tutorial-slide active" id="slide-0">
             <div class="slide-icon">🚀</div>
             <div class="slide-title">1. 操作方法</div>
-            <div class="slide-desc">
+            <div class="slide-desc" id="tutorial-desc-text">
                 マウス移動で自機が追従します。<br>
-                左クリック（またはスペースキー長押し）で<br>
-                自動ビームを連射して敵を撃破！
+                左クリックで自動ビームを連射して敵を撃破！
             </div>
         </div>
 
@@ -445,6 +514,22 @@ const hpEl = document.getElementById('hp-val');
 const overlay = document.getElementById('main-overlay');
 const tutorialOverlay = document.getElementById('tutorial-overlay');
 
+// モバイル端末判定ロジック
+function isMobileDevice() {
+    return (('ontouchstart' in window) ||
+            (navigator.maxTouchPoints > 0) ||
+            (navigator.msMaxTouchPoints > 0));
+}
+
+let isMobile = isMobileDevice();
+
+// モバイルの場合のみ操作パネルを表示し、説明文をタッチ用に切り替え
+if (isMobile) {
+    document.getElementById('mobile-controls').style.display = 'flex';
+    document.getElementById('tutorial-desc-text').innerHTML = 
+        '左下の仮想パッドスライドで自機移動。<br>右下の「SHOOT」ボタンでビーム発射！';
+}
+
 let currentSlide = 0;
 const totalSlides = 3;
 
@@ -487,7 +572,7 @@ let gameData = {
 };
 
 let startMode = 'new';
-let difficulty = 1; // 1: ★✰✰, 2: ★★✰, 3: ★★★
+let difficulty = 1;
 
 function loadGameData() {
     const saved = localStorage.getItem('neon_striker_save');
@@ -513,19 +598,16 @@ function confirmResetStep1() {
         confirmResetStep2();
     }
 }
-
 function confirmResetStep2() {
     if (confirm("【第2段階】\n本当にすべてのデータが消去されます。本当に消しますか？")) {
         confirmResetStep3();
     }
 }
-
 function confirmResetStep3() {
     if (confirm("【最終確認】\n後悔しませんね？ OKを押すとデータが完全に消去されます。")) {
         executeResetAnimation();
     }
 }
-
 function executeResetAnimation() {
     const container = document.getElementById('game-container');
     container.classList.add('reset-anim');
@@ -542,7 +624,7 @@ function executeResetAnimation() {
     }, 600);
 }
 
-// バックアップ機能（エクスポート・インポート）
+// バックアップ機能
 function exportSave() {
     const dataStr = btoa(JSON.stringify(gameData));
     prompt("セーブデータのバックアップコードです。コピーして保存してください：", dataStr);
@@ -648,15 +730,84 @@ for (let i = 0; i < 100; i++) {
     });
 }
 
+// 入力イベント（PC & モバイル共通対応）
 window.addEventListener('mousemove', (e) => {
+    if (isMobile) return; // モバイル時はマウス無効
     const rect = canvas.getBoundingClientRect();
     mouseX = e.clientX - rect.left;
     mouseY = e.clientY - rect.top;
 });
-window.addEventListener('mousedown', () => isMouseDown = true);
-window.addEventListener('mouseup', () => isMouseDown = false);
+window.addEventListener('mousedown', () => { if (!isMobile) isMouseDown = true; });
+window.addEventListener('mouseup', () => { if (!isMobile) isMouseDown = false; });
 window.addEventListener('keydown', (e) => { if (e.code === 'Space') isMouseDown = true; });
 window.addEventListener('keyup', (e) => { if (e.code === 'Space') isMouseDown = false; });
+
+// モバイル用バーチャルパッドのタッチ操作ロジック
+const virtualPad = document.getElementById('virtual-pad');
+const virtualStick = document.getElementById('virtual-stick');
+const virtualShootBtn = document.getElementById('virtual-shoot-btn');
+
+let touchId = null;
+virtualPad.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    const touch = e.changedTouches[0];
+    touchId = touch.identifier;
+    updateStickPosition(touch);
+});
+
+virtualPad.addEventListener('touchmove', (e) => {
+    e.preventDefault();
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === touchId) {
+            updateStickPosition(e.changedTouches[i]);
+        }
+    }
+});
+
+function endVirtualTouch(e) {
+    for (let i = 0; i < e.changedTouches.length; i++) {
+        if (e.changedTouches[i].identifier === touchId) {
+            touchId = null;
+            virtualStick.style.transform = `translate(0px, 0px)`;
+        }
+    }
+}
+virtualPad.addEventListener('touchend', endVirtualTouch);
+virtualPad.addEventListener('touchcancel', endVirtualTouch);
+
+function updateStickPosition(touch) {
+    const rect = virtualPad.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    let dx = touch.clientX - centerX;
+    let dy = touch.clientY - centerY;
+    const dist = Math.hypot(dx, dy);
+    const maxRadius = 45;
+
+    if (dist > maxRadius) {
+        dx = (dx / dist) * maxRadius;
+        dy = (dy / dist) * maxRadius;
+    }
+
+    virtualStick.style.transform = `translate(${dx}px, ${dy}px)`;
+
+    // 自機の目標位置をバーチャルパッドの傾きに応じて移動スピードを加算
+    mouseX = player.x + (dx / maxRadius) * 12;
+    mouseY = player.y + (dy / maxRadius) * 12;
+}
+
+// ショットボタン
+virtualShootBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    isMouseDown = true;
+    virtualShootBtn.classList.add('touching');
+});
+virtualShootBtn.addEventListener('touchend', (e) => {
+    e.preventDefault();
+    isMouseDown = false;
+    virtualShootBtn.classList.remove('touching');
+});
 
 function startGame() {
     if (startMode === 'new') {
@@ -682,6 +833,9 @@ function startGame() {
         radius: 12,
         shootCooldown: 0
     };
+    
+    mouseX = player.x;
+    mouseY = player.y;
 
     overlay.classList.add('hidden');
     gameRunning = true;
